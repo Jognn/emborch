@@ -1,0 +1,14 @@
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:189:12:getfield	40	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:147:13:setfield	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:309:12:os_setlocale	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:120:12:os_rename	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:114:12:os_remove	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:127:12:os_getenv	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:321:12:os_exit	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:102:12:os_execute	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:299:12:os_difftime	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:133:12:os_clock	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:163:13:setallfields	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:274:12:os_time	56	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:233:12:os_date	80	static
+/home/jogn/Projects/RIOT/build/pkg/lua/loslib.c:352:16:luaopen_os	8	static

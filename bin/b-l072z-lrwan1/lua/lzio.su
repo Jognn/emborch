@@ -1,0 +1,3 @@
+/home/jogn/Projects/RIOT/build/pkg/lua/lzio.c:23:5:luaZ_fill	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lzio.c:38:6:luaZ_init	0	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lzio.c:48:8:luaZ_read	24	static

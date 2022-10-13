@@ -1,0 +1,15 @@
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:83:20:intarith	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:251:20:l_str2dloc	24	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:390:13:pushstr	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:103:19:numarith.constprop	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:41:5:luaO_int2fb	0	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:57:5:luaO_fb2int	0	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:65:5:luaO_ceillog2	0	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:123:6:luaO_arith	48	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:163:5:luaO_hexavalue	0	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:331:8:luaO_str2num	88	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:346:5:luaO_utf8esc	20	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:371:6:luaO_tostring	80	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:467:13:luaO_pushfstring	12	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:400:13:luaO_pushvfstring	56	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lobject.c:486:6:luaO_chunkid	32	static

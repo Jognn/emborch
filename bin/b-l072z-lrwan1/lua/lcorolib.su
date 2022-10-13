@@ -1,0 +1,11 @@
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:138:12:luaB_yieldable	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:106:12:luaB_yield	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:28:12:auxresume	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:144:12:luaB_corunning	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:89:12:luaB_cocreate	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:99:12:luaB_cowrap	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:74:12:luaB_auxwrap	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:21:19:getco	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:111:12:luaB_costatus	120	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:57:12:luaB_coresume	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lcorolib.c:164:16:luaopen_coroutine	8	static

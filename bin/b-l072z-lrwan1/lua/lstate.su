@@ -1,0 +1,12 @@
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:151:13:stack_init	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:203:13:f_luaopen	32	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:98:6:luaE_setdebt	0	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:108:11:luaE_extendCI	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:122:6:luaE_freeCI	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:171:13:freestack.part.0	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:242:13:close_state	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:295:20:lua_newstate	56	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:137:6:luaE_shrinkCI	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:255:20:lua_newthread	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:285:6:luaE_freethread	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lstate.c:341:14:lua_close	8	static

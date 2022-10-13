@@ -1,0 +1,3 @@
+/home/jogn/Projects/IoTPlatform/cmake-build-debug/CMakeFiles/IoTPlatform.dir
+/home/jogn/Projects/IoTPlatform/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/jogn/Projects/IoTPlatform/cmake-build-debug/CMakeFiles/rebuild_cache.dir

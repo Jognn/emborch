@@ -1,0 +1,10 @@
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:40:20:utf8_decode	20	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:225:12:iter_codes	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:201:12:iter_aux	24	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:128:13:pushutfchar	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:138:12:utfchar	32	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:30:20:u_posrelat	0	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:71:12:utflen	40	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:160:12:byteoffset	40	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:100:12:codepoint	40	static
+/home/jogn/Projects/RIOT/build/pkg/lua/lutf8lib.c:250:16:luaopen_utf8	8	static

@@ -1,0 +1,17 @@
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:117:14:mainposition	24	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:541:22:getgeneric	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:241:12:countint	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:186:5:luaH_next	24	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:402:8:luaH_new	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:414:6:luaH_free	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:497:15:luaH_getint	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:520:15:luaH_getshortstr	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:556:15:luaH_getstr	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:570:15:luaH_get	24	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:599:6:luaH_setint	32	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:333:6:luaH_resize	48	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:368:6:luaH_resizearray	8	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:376:13:rehash	176	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:442:9:luaH_newkey	48	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:591:9:luaH_set	16	static
+/home/jogn/Projects/RIOT/build/pkg/lua/ltable.c:641:5:luaH_getn	24	static
