@@ -5,4 +5,4 @@ set(CMAKE_C_STANDARD 11)
 
 include_directories(../RIOT/)
 
-add_executable(IoTPlatform main.c include/board.h)
+add_executable(IoTPlatform main.c lua_functions.c)
