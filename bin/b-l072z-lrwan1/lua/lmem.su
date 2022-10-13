@@ -1,3 +1,0 @@
-/home/jogn/Projects/RIOT/build/pkg/lua/lmem.c:68:9:luaM_toobig	8	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lmem.c:77:7:luaM_realloc_	40	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lmem.c:48:7:luaM_growaux_	32	static

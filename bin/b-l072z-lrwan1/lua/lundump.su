@@ -1,9 +1,0 @@
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:39:16:error	8	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:51:13:LoadBlock	8	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:60:16:LoadByte	16	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:67:12:LoadInt	16	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:219:13:checkliteral	40	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:88:17:LoadString	64	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:228:13:fchecksize.constprop	16	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:202:13:LoadFunction	40	static
-/home/jogn/Projects/RIOT/build/pkg/lua/lundump.c:258:11:luaU_undump	32	static

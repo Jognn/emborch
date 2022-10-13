@@ -1,6 +1,0 @@
-/home/jogn/Projects/RIOT/build/pkg/lua/ldump.c:40:13:DumpBlock	16	static
-/home/jogn/Projects/RIOT/build/pkg/lua/ldump.c:52:13:DumpByte	16	static
-/home/jogn/Projects/RIOT/build/pkg/lua/ldump.c:58:13:DumpInt	16	static
-/home/jogn/Projects/RIOT/build/pkg/lua/ldump.c:73:13:DumpString	24	static
-/home/jogn/Projects/RIOT/build/pkg/lua/ldump.c:166:13:DumpFunction	40	static
-/home/jogn/Projects/RIOT/build/pkg/lua/ldump.c:202:5:luaU_dump	40	static
