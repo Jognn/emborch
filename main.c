@@ -12,10 +12,10 @@
 #include "bin/b-l072z-lrwan1/application_IoTPlatform/blobs/blob/main.lua.h"
 
 /* Lua stack */
-static char lua_stack[3000] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+static char luaEngineTaskStack[3000] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 /* CODE */
-void *Lua_Task(void *arg)
+void* LuaEngine(void *arg)
 {
     (void) arg;
 
@@ -29,11 +29,11 @@ void *Lua_Task(void *arg)
 int main(void)
 {
     thread_create(
-            lua_stack,
-            sizeof(lua_stack),
+            luaEngineTaskStack,
+            sizeof(luaEngineTaskStack),
             THREAD_PRIORITY_MAIN - 1,
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
-            Lua_Task,
+            LuaEngine,
             NULL,
             "LUA_TASK"
     );
