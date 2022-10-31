@@ -1,0 +1,21 @@
+//
+// Created by jogn on 31.10.22.
+//
+
+#ifndef IOTPLATFORM_DEBUG_H
+#define IOTPLATFORM_DEBUG_H
+
+#include <stdio.h>
+
+/* DEBUG_MODE */
+#define DEBUG_MODE 0
+
+#define LOG_DEBUG(...)  if(DEBUG_MODE == 1) { printf(__VA_ARGS__); }
+
+#if DEBUG_MODE == 1
+#define LUA_ENGINE_TASK_STACKSIZE (THREAD_STACKSIZE_DEFAULT+THREAD_EXTRA_STACKSIZE_PRINTF)
+#else
+#define LUA_ENGINE_TASK_STACKSIZE THREAD_STACKSIZE_DEFAULT
+#endif
+
+#endif //IOTPLATFORM_DEBUG_H
