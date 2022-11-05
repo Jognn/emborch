@@ -15,4 +15,6 @@ int native_toggle(uint32_t port, uint32_t pin);
 
 int native_sleepMili(int miliseconds);
 
+int native_getTemperature(void);
+
 #endif //IOTPLATFORM_NATIVE_TASK_H

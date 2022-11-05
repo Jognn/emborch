@@ -8,6 +8,7 @@
 #include "include/lua_run.h"
 
 #include <errno.h>
+#include <stdlib.h>
 #include "include/debug.h"
 
 static char luaMem[LUA_MEM_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
@@ -26,7 +27,8 @@ uint32_t l_getTimeSample(uint32_t const index)
 static struct callbackTable luaCallbacks[] = {
         { .functionCallback = l_togglePin, .functionName = "toggle_pin" },
         { .functionCallback = l_sleep, .functionName = "sleep" },
-        { .functionCallback = l_sleepMili, .functionName = "sleep_ms" },
+        { .functionCallback = l_sleepMilli, .functionName = "sleep_ms" },
+        { .functionCallback = l_getTemperatureMock, .functionName = "get_temperature"},
 };
 
 static void initCallbackTable(lua_State *L)
@@ -37,6 +39,8 @@ static void initCallbackTable(lua_State *L)
         lua_setglobal(L, luaCallbacks[i].functionName);
     }
 }
+
+static int number = 0;
 
 int l_runScript(uint8_t const * const script, size_t const scriptSize)
 {
@@ -50,6 +54,7 @@ int l_runScript(uint8_t const * const script, size_t const scriptSize)
     initCallbackTable(L);
 
     gpio_init(GPIO_PIN(7, 0), GPIO_OUT);
+    number = 0;
 
     int const loadBaseLibResult = lua_riot_openlibs(L, LUAR_LOAD_BASE);
     if(loadBaseLibResult !=  LUAR_LOAD_O_ALL)
@@ -77,6 +82,12 @@ int l_runScript(uint8_t const * const script, size_t const scriptSize)
     return 0;
 }
 
+int l_getTemperatureMock(lua_State *L)
+{
+    lua_pushnumber(L, rand());
+    return 1;
+}
+
 int l_togglePin(lua_State *L)
 {
     (void) L;
@@ -84,7 +95,6 @@ int l_togglePin(lua_State *L)
     uint32_t const port = luaL_checkinteger(L, 1);
     uint32_t const pin =  luaL_checkinteger(L, 2);
 
-//    gpio_init(GPIO_PIN(port, pin), GPIO_OUT);
     LOG_DEBUG("Toggling port: %lu pin: %lu\n", port, pin)
     gpio_toggle(GPIO_PIN(port, pin));
 
@@ -100,7 +110,7 @@ int l_sleep(lua_State *L)
     return 0;
 }
 
-int l_sleepMili(lua_State *L)
+int l_sleepMilli(lua_State *L)
 {
     uint32_t const milliseconds = luaL_checkinteger(L, 1);
     LOG_DEBUG("Sleeping for %lums\n", milliseconds)

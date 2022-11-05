@@ -8,3 +8,6 @@ include_directories(../RIOT/)
 include_directories(include)
 
 add_executable(IoTPlatform main.c lua_functions.c native_task.c)
+
+target_include_directories(IoTPlatform PUBLIC ../RIOT)
+add_subdirectory(../RIOT RIOT)

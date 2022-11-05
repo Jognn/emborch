@@ -34,8 +34,6 @@ QUIET ?= 1
 
 # Modules to include:
 
-#USEMODULE += shell
-#USEMODULE += posix_headers
 USEMODULE += xtimer
 USEMODULE += periph_gpio_irq
 
