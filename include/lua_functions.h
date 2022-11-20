@@ -14,8 +14,6 @@ struct callbackTable {
     const char* functionName;
 };
 
-uint32_t l_getTimeSample(uint32_t index);
-
 int l_runScript(char const * script, unsigned scriptSize);
 
 int l_getTemperatureMock(lua_State *L);

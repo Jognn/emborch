@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 /* NATIVE TASK */
-#define NATIVE_TASK 0
+#define NATIVE_TASK 1
 
 /* DEBUG_MODE */
 #define DEBUG_MODE 0

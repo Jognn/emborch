@@ -5,25 +5,17 @@
 
 #if (NATIVE_TASK == 0)
 #include "include/lua_functions.h"
+
 #include "include/gpio.h"
 #include "include/xtimer.h"
-
 #include "include/lua_run.h"
+#include "include/benchmark_testSamples.h"
+
 #include <errno.h>
 #include <stdlib.h>
 
+
 static char luaMem[LUA_MEM_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
-
-static uint32_t measuredTimeSamples[10];
-static uint32_t timeSamplesIndex = 0;
-
-uint32_t l_getTimeSample(uint32_t const index)
-{
-    if(index >= 10)
-        return UINT32_MAX;
-
-    return measuredTimeSamples[index];
-}
 
 static struct callbackTable luaCallbacks[] = {
         { .functionCallback = l_togglePin, .functionName = "toggle_pin" },
@@ -41,8 +33,6 @@ static void initCallbackTable(lua_State *L)
     }
 }
 
-static int number = 0;
-
 int l_runScript(char const * const script, unsigned const scriptSize)
 {
     lua_State *L = lua_riot_newstate(luaMem, sizeof(luaMem), NULL);
@@ -55,7 +45,6 @@ int l_runScript(char const * const script, unsigned const scriptSize)
     initCallbackTable(L);
 
     gpio_init(GPIO_PIN(7, 0), GPIO_OUT);
-    number = 0;
 
     int const loadBaseLibResult = lua_riot_openlibs(L, LUAR_LOAD_BASE);
     if(loadBaseLibResult !=  LUAR_LOAD_O_ALL)
@@ -70,8 +59,8 @@ int l_runScript(char const * const script, unsigned const scriptSize)
     int const pcallResult = lua_pcall(L, 0, 0, 0);
     uint32_t const stop = xtimer_now_usec();
 
-    measuredTimeSamples[timeSamplesIndex] = stop - start;
-    ++timeSamplesIndex;
+    // Benchmark tests - time execution
+    benchmark_setNextTimeSample(stop - start);
 
     if (pcallResult != LUA_OK)
     {

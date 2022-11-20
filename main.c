@@ -11,6 +11,7 @@
 /* BLOB */
 #include "bin/b-l072z-lrwan1/application_IoTPlatform/blobs/blob/main.lua.h"
 
+#include "include/benchmark_testSamples.h"
 #include "include/native_task.h"
 #include "include/definitons.h"
 
@@ -18,13 +19,14 @@
 #define STACK_SIZE 2000
 static char luaEngineTaskStack[STACK_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
+int const repetitions = 5;
+
 #if (NATIVE_TASK == 0)
 /* CODE */
 void* LuaEngine(void *arg)
 {
     (void) arg;
-
-    int const repetitions = 5;
+    benchmark_init();
 
     for(int i = 0; i < repetitions; ++i)
     {
@@ -34,11 +36,10 @@ void* LuaEngine(void *arg)
         const char* stack = thread_get_stackstart(thread_get_active());
         printf("STACK USAGE %d, = %d\n", i, STACK_SIZE - thread_measure_stack_free(stack));
     }
-
-
+    
     for(int i = 0; i < repetitions; ++i)
     {
-        printf("timeSamples[%d] = %lu us\n", i, l_getTimeSample(i));
+        printf("timeSamples[%d] = %lu us\n", i, benchmark_getTimeSample(i));
     }
 
     return NULL;
@@ -49,15 +50,16 @@ void* LuaEngine(void *arg)
 void* NativeTask(void *arg)
 {
     (void) arg;
+    benchmark_init();
 
-    for(int i = 0; i < 5; ++i)
+    for(int i = 0; i < repetitions; ++i)
     {
         native_run();
     }
 
-    for(int i = 0; i < 5; ++i)
+    for(int i = 0; i < repetitions; ++i)
     {
-        printf("timeSamples[%d] = %lu us\n", i, native_getTimeSamples(i));
+        printf("timeSamples[%d] = %lu us\n", i, benchmark_getTimeSample(i));
     }
 
     return NULL;

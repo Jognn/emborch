@@ -10,8 +10,8 @@
 
 #include "include/xtimer.h"
 #include "include/gpio.h"
+#include "include/benchmark_testSamples.h"
 #include "stdlib.h"
-
 
 #define RAND_ARRAY \
 { \
@@ -23,17 +23,6 @@
 {rand()%6,rand()%6,rand()%6,rand()%6,rand()%6,rand()%6} \
 }
 
-uint32_t measuredTimeSamples[10];
-uint32_t timeSamplesIndex = 0;
-static double number = 0;
-
-uint32_t native_getTimeSamples(uint32_t const index)
-{
-    if (index >= 10)
-        return UINT32_MAX;
-
-    return measuredTimeSamples[index];
-}
 
 static void led_blinking(void)
 {
@@ -67,7 +56,7 @@ static void matrix_multiplication(void)
 
 static double integerAvgTemperature(void)
 {
-    int const AMOUNT_OF_SAMPLES = 5; // W zależności od testu ta wartość wynosi 5/15/25/50
+    int const AMOUNT_OF_SAMPLES = 5;
 
     int temperatureSamples[AMOUNT_OF_SAMPLES];
     double sum = 0;
@@ -86,11 +75,11 @@ void native_run(void)
 {
     srand(xtimer_now_usec());
     uint32_t const start = xtimer_now_usec();
-    number = integerAvgTemperature();
+    integerAvgTemperature();
     uint32_t const stop = xtimer_now_usec();
 
-    measuredTimeSamples[timeSamplesIndex] = stop - start;
-    ++timeSamplesIndex;
+    // Benchmark tests - time execution
+    benchmark_setNextTimeSample(stop - start);
 }
 
 int native_toggle(uint32_t const port, uint32_t const pin)

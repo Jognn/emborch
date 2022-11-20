@@ -7,8 +7,6 @@
 
 #include "xtimer.h"
 
-uint32_t native_getTimeSamples(uint32_t index);
-
 void native_run(void);
 
 int native_toggle(uint32_t port, uint32_t pin);
