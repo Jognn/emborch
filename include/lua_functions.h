@@ -7,7 +7,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#define LUA_MEM_SIZE (11000) // 11 kB
+#define LUA_MEM_SIZE (10700) // 11 kB
 
 struct callbackTable {
     lua_CFunction functionCallback;
@@ -16,7 +16,7 @@ struct callbackTable {
 
 uint32_t l_getTimeSample(uint32_t index);
 
-int l_runScript(uint8_t const * script, size_t scriptSize);
+int l_runScript(char const * script, unsigned scriptSize);
 
 int l_getTemperatureMock(lua_State *L);
 

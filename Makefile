@@ -16,7 +16,7 @@ BOARD ?= b-l072z-lrwan1
 RIOTBASE ?= $(CURDIR)/../RIOT
 
 # Uncomment this to enable scheduler statistics for ps:
-CFLAGS += -DSCHEDSTATISTICS
+#CFLAGS += -DSCHEDSTATISTICS
 
 FEATURES_REQUIRED = periph_gpio
 
@@ -29,6 +29,8 @@ FEATURES_REQUIRED = periph_gpio
 # development process:
 DEVELHELP = 1
 
+WERROR = 0
+
 # Change this to 0 to show compiler invocation lines by default:
 QUIET ?= 1
 
@@ -36,15 +38,16 @@ QUIET ?= 1
 
 USEMODULE += xtimer
 USEMODULE += periph_gpio_irq
+#USEMODULE += sx1276
+#USEMODULE += semtech_loramac_rx
 
 # If your application is very simple and doesn't use modules that use
 # messaging, it can be disabled to save some memory:
 
 #DISABLE_MODULE += core_msg
 
-#INCLUDES += -Iapplication_include
-
 USEPKG += lua
+#USEPKG += semtech-loramac
 
 # generate .lua.h header files of .lua files
 BLOBS += $(wildcard *.lua)

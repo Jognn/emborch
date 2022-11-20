@@ -1,15 +1,16 @@
 //
 // Created by jogn on 13.10.22.
 //
-#include "include/lua_functions.h"
+#include "include/definitons.h"
 
+#if (NATIVE_TASK == 0)
+#include "include/lua_functions.h"
 #include "include/gpio.h"
 #include "include/xtimer.h"
-#include "include/lua_run.h"
 
+#include "include/lua_run.h"
 #include <errno.h>
 #include <stdlib.h>
-#include "include/debug.h"
 
 static char luaMem[LUA_MEM_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
@@ -42,7 +43,7 @@ static void initCallbackTable(lua_State *L)
 
 static int number = 0;
 
-int l_runScript(uint8_t const * const script, size_t const scriptSize)
+int l_runScript(char const * const script, unsigned const scriptSize)
 {
     lua_State *L = lua_riot_newstate(luaMem, sizeof(luaMem), NULL);
     if (L == NULL)
@@ -63,7 +64,7 @@ int l_runScript(uint8_t const * const script, size_t const scriptSize)
         return EINTR;
     }
 
-    luaL_loadbuffer(L, (const char *)script, scriptSize, "Main function");
+    luaL_loadbuffer(L, script, scriptSize, "Main function");
 
     uint32_t const start = xtimer_now_usec();
     int const pcallResult = lua_pcall(L, 0, 0, 0);
@@ -118,3 +119,5 @@ int l_sleepMilli(lua_State *L)
 
     return 0;
 }
+
+#endif // NATIVE_TASK == 0

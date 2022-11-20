@@ -13,7 +13,7 @@ void native_run(void);
 
 int native_toggle(uint32_t port, uint32_t pin);
 
-int native_sleepMili(int miliseconds);
+int native_sleepMilli(int milliseconds);
 
 int native_getTemperature(void);
 

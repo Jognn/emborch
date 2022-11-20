@@ -2,10 +2,13 @@
 // Created by jogn on 31.10.22.
 //
 
-#ifndef IOTPLATFORM_DEBUG_H
-#define IOTPLATFORM_DEBUG_H
+#ifndef IOTPLATFORM_DEFINITONS_H
+#define IOTPLATFORM_DEFINITONS_H
 
 #include <stdio.h>
+
+/* NATIVE TASK */
+#define NATIVE_TASK 0
 
 /* DEBUG_MODE */
 #define DEBUG_MODE 0
@@ -18,4 +21,4 @@
 #define LUA_ENGINE_TASK_STACKSIZE THREAD_STACKSIZE_DEFAULT
 #endif
 
-#endif //IOTPLATFORM_DEBUG_H
+#endif //IOTPLATFORM_DEFINITONS_H

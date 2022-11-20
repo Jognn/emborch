@@ -2,16 +2,30 @@
 // Created by jogn on 31.10.22.
 //
 
-#include "include/native_task.h"
+#include "include/definitons.h"
 
-#include "include/debug.h"
+#if (NATIVE_TASK == 1)
+
+#include "include/native_task.h"
 
 #include "include/xtimer.h"
 #include "include/gpio.h"
+#include "stdlib.h"
+
+
+#define RAND_ARRAY \
+{ \
+{rand()%6,rand()%6,rand()%6,rand()%6,rand()%6,rand()%6}, \
+{rand()%6,rand()%6,rand()%6,rand()%6,rand()%6,rand()%6}, \
+{rand()%6,rand()%6,rand()%6,rand()%6,rand()%6,rand()%6}, \
+{rand()%6,rand()%6,rand()%6,rand()%6,rand()%6,rand()%6}, \
+{rand()%6,rand()%6,rand()%6,rand()%6,rand()%6,rand()%6}, \
+{rand()%6,rand()%6,rand()%6,rand()%6,rand()%6,rand()%6} \
+}
 
 uint32_t measuredTimeSamples[10];
 uint32_t timeSamplesIndex = 0;
-static int number = 0;
+static double number = 0;
 
 uint32_t native_getTimeSamples(uint32_t const index)
 {
@@ -26,18 +40,16 @@ static void led_blinking(void)
     for (int j = 1; j <= 4; ++j)
     {
         native_toggle(7, 0);
-        native_sleepMili(500);
+        native_sleepMilli(500);
     }
 }
 
 static void matrix_multiplication(void)
 {
 #define M 6
-
-    long a[M][M] =
-    {{1,2,3,4,5,6},{1,2,3,4,5,6},{1,2,3,4,5,6},{1,2,3,4,5,6},{1,2,3,4,5,6},{1,2,3,4,5,6}};
-    long b[M][M] = {{1,2,3,4,5,6},{1,2,3,4,5,6},{1,2,3,4,5,6},{1,2,3,4,5,6},{1,2,3,4,5,6},{1,2,3,4,5,6}};
-    long c[M][M] = {{0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}};
+    long a[M][M] = RAND_ARRAY;
+    long b[M][M] = RAND_ARRAY;
+    long c[M][M] = RAND_ARRAY;
 
     for (int i = 0; i < M; ++i)
     {
@@ -55,7 +67,7 @@ static void matrix_multiplication(void)
 
 static double integerAvgTemperature(void)
 {
-    int const AMOUNT_OF_SAMPLES = 75;
+    int const AMOUNT_OF_SAMPLES = 5; // W zależności od testu ta wartość wynosi 5/15/25/50
 
     int temperatureSamples[AMOUNT_OF_SAMPLES];
     double sum = 0;
@@ -72,8 +84,9 @@ static double integerAvgTemperature(void)
 
 void native_run(void)
 {
+    srand(xtimer_now_usec());
     uint32_t const start = xtimer_now_usec();
-    integerAvgTemperature();
+    number = integerAvgTemperature();
     uint32_t const stop = xtimer_now_usec();
 
     measuredTimeSamples[timeSamplesIndex] = stop - start;
@@ -87,15 +100,17 @@ int native_toggle(uint32_t const port, uint32_t const pin)
     return 0;
 }
 
-int native_sleepMili(int const miliseconds)
+int native_sleepMilli(int const milliseconds)
 {
-    xtimer_msleep(miliseconds);
+    xtimer_msleep(milliseconds);
     return 0;
 }
 
 int native_getTemperature()
 {
-    return ++number;;
+    return rand()%10;
 }
+
+#endif // NATIVE_TASK == 0
 
 

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="IoTPlatform" targetName="IoTPlatform" />
+      <config projectName="IoTPlatform" targetName="RIOT" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="dd044d5d-4e4c-47d5-8fee-fbb7e1efdeae" name="Changes" comment="Tempp changes">
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/debug.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/definitons.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/lua_functions.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/lua_functions.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/native_task.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/native_task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lua_functions.c" beforeDir="false" afterPath="$PROJECT_DIR$/lua_functions.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.lua" beforeDir="false" afterPath="$PROJECT_DIR$/main.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/native_task.c" beforeDir="false" afterPath="$PROJECT_DIR$/native_task.c" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="NewLua" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file:///usr/local/include/lauxlib.h" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2022" />
+    <option name="minorVersion" value="2.1" />
+  </component>
+  <component name="ProjectId" id="2DzwsPzDtZdal3J9VM18TkYw8Lv" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/jogn/Projects/RIOT-OS_TUTORIALS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.IDE.editor.colors.C/C++&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/include" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/include" />
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.IoTPlatform">
+    <configuration name="IoTPlatform" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IoTPlatform" TARGET_NAME="IoTPlatform" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="IoTPlatform" RUN_TARGET_NAME="IoTPlatform">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RIOT" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="IoTPlatform" TARGET_NAME="RIOT" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.IoTPlatform" />
+      <item itemvalue="CMake Application.RIOT" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="dd044d5d-4e4c-47d5-8fee-fbb7e1efdeae" name="Changes" comment="" />
+      <created>1661715426510</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1661715426510</updated>
+      <workItem from="1661715428439" duration="5400000" />
+      <workItem from="1661805106182" duration="145000" />
+      <workItem from="1665583753210" duration="7277000" />
+      <workItem from="1665689716700" duration="9790000" />
+      <workItem from="1665781051723" duration="232000" />
+      <workItem from="1665841465614" duration="5580000" />
+      <workItem from="1666288819306" duration="4205000" />
+      <workItem from="1666354821677" duration="1638000" />
+      <workItem from="1666869409464" duration="9309000" />
+      <workItem from="1666959610816" duration="2430000" />
+      <workItem from="1667216637582" duration="9875000" />
+      <workItem from="1667228486291" duration="6602000" />
+      <workItem from="1667423805734" duration="5836000" />
+      <workItem from="1667503488852" duration="8536000" />
+      <workItem from="1667573309997" duration="806000" />
+      <workItem from="1667652310789" duration="4800000" />
+      <workItem from="1667851412477" duration="5446000" />
+      <workItem from="1668096949087" duration="3000" />
+      <workItem from="1668719167095" duration="1210000" />
+      <workItem from="1668773397835" duration="3000" />
+      <workItem from="1668850629897" duration="10968000" />
+    </task>
+    <task id="LOCAL-00001" summary="Edited Lua task's name">
+      <created>1666870438200</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1666870438200</updated>
+    </task>
+    <task id="LOCAL-00002" summary="x">
+      <created>1666870509893</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1666870509893</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Wrote testing code, that measures natively run code, as well as LuaEngine based one. &#10;&#10;This has to be improved/removed, as it looks pretty bad, and not scalable :(&#10;&#10;LUA_MEM - 10kB&#10;LUA_STACK - 1024B (RELEASE) or 1536B (DEBUG)">
+      <created>1667226946600</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1667226946600</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Tempp changes">
+      <created>1667653875709</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1667653875710</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Edited Lua task's name" />
+    <MESSAGE value="x" />
+    <MESSAGE value="Wrote testing code, that measures natively run code, as well as LuaEngine based one. &#10;&#10;This has to be improved/removed, as it looks pretty bad, and not scalable :(&#10;&#10;LUA_MEM - 10kB&#10;LUA_STACK - 1024B (RELEASE) or 1536B (DEBUG)" />
+    <MESSAGE value="Wrote testing code, that measures natively run code, as well as LuaEngine based one.&#10;This has to be improved/removed, as it looks pretty bad, and not scalable :(&#10;&#10;Additionally dedicated DEBUG_MODE has been added. It enhances performance when printing is not needed, and determines LuaEngine OS task stack size.&#10;&#10;LUA_MEM - 10kB&#10;LUA_STACK - 1024B (RELEASE) or 1536B (DEBUG)" />
+    <MESSAGE value="Tempp changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tempp changes" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/main.c</url>
+          <line>16</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/native_task.c</url>
+          <line>38</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

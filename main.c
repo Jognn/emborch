@@ -11,13 +11,14 @@
 /* BLOB */
 #include "bin/b-l072z-lrwan1/application_IoTPlatform/blobs/blob/main.lua.h"
 
-#include "native_task.h"
-#include "debug.h"
+#include "include/native_task.h"
+#include "include/definitons.h"
 
 /* Lua stack */
 #define STACK_SIZE 2000
 static char luaEngineTaskStack[STACK_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
+#if (NATIVE_TASK == 0)
 /* CODE */
 void* LuaEngine(void *arg)
 {
@@ -28,7 +29,7 @@ void* LuaEngine(void *arg)
     for(int i = 0; i < repetitions; ++i)
     {
         puts("Attempting to run main.lua");
-        l_runScript(main_lua, main_lua_len);
+        l_runScript((const char *)main_lua, main_lua_len);
         puts("Lua interpreter exited");
         const char* stack = thread_get_stackstart(thread_get_active());
         printf("STACK USAGE %d, = %d\n", i, STACK_SIZE - thread_measure_stack_free(stack));
@@ -42,7 +43,9 @@ void* LuaEngine(void *arg)
 
     return NULL;
 }
+#endif
 
+#if (NATIVE_TASK == 1)
 void* NativeTask(void *arg)
 {
     (void) arg;
@@ -59,9 +62,11 @@ void* NativeTask(void *arg)
 
     return NULL;
 }
+#endif
 
 int main(void)
 {
+#if (NATIVE_TASK == 0)
     thread_create(
             luaEngineTaskStack,
             sizeof(luaEngineTaskStack),
@@ -71,15 +76,18 @@ int main(void)
             NULL,
             "LUA_TASK"
     );
+#endif
 
-//    thread_create(
-//            luaEngineTaskStack,
-//            sizeof(luaEngineTaskStack),
-//            THREAD_PRIORITY_MAIN - 1,
-//            THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
-//            NativeTask,
-//            NULL,
-//            "NATIVE_TASK"
-//    );
+#if (NATIVE_TASK == 1)
+    thread_create(
+            luaEngineTaskStack,
+            sizeof(luaEngineTaskStack),
+            THREAD_PRIORITY_MAIN - 1,
+            THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
+            NativeTask,
+            NULL,
+            "NATIVE_TASK"
+    );
+#endif
     return 0;
 }
