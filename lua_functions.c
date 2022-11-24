@@ -49,7 +49,7 @@ int l_runScript(char const * const script, unsigned const scriptSize)
     int const loadBaseLibResult = lua_riot_openlibs(L, LUAR_LOAD_BASE);
     if(loadBaseLibResult !=  LUAR_LOAD_O_ALL)
     {
-        printf("An error has occurred when trying to load library - %d\n", loadBaseLibResult);
+        printf("[ERROR] Trying to load library - %d\n", loadBaseLibResult);
         return EINTR;
     }
 
@@ -64,7 +64,7 @@ int l_runScript(char const * const script, unsigned const scriptSize)
 
     if (pcallResult != LUA_OK)
     {
-        puts("Lua script running failed");
+        printf("[ERROR] Lua script running failed - %d\n", pcallResult);
         return EINTR;
     }
 
@@ -80,8 +80,6 @@ int l_getTemperatureMock(lua_State *L)
 
 int l_togglePin(lua_State *L)
 {
-    (void) L;
-
     uint32_t const port = luaL_checkinteger(L, 1);
     uint32_t const pin =  luaL_checkinteger(L, 2);
 

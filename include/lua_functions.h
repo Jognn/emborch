@@ -7,8 +7,6 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#define LUA_MEM_SIZE (10700) // 11 kB
-
 struct callbackTable {
     lua_CFunction functionCallback;
     const char* functionName;
