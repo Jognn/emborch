@@ -11,13 +11,13 @@
 /* BLOB */
 #include "bin/b-l072z-lrwan1/application_IoTPlatform/blobs/blob/main.lua.h"
 
+#include "include/definitons.h"
 #include "include/benchmark_testSamples.h"
 #include "include/native_task.h"
-#include "include/definitons.h"
+#include "string.h"
 
 /* Lua stack */
-#define STACK_SIZE 2000
-static char luaEngineTaskStack[STACK_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 int const repetitions = 5;
 
@@ -34,7 +34,7 @@ void* LuaEngine(void *arg)
         l_runScript((const char *)main_lua, main_lua_len);
         puts("Lua interpreter exited");
         const char* stack = thread_get_stackstart(thread_get_active());
-        printf("STACK USAGE %d, = %d\n", i, STACK_SIZE - thread_measure_stack_free(stack));
+        printf("STACK USAGE %d = %d\n", i, LUA_ENGINE_TASK_STACKSIZE - thread_measure_stack_free(stack));
     }
     
     for(int i = 0; i < repetitions; ++i)
@@ -78,9 +78,7 @@ int main(void)
             NULL,
             "LUA_TASK"
     );
-#endif
-
-#if (NATIVE_TASK == 1)
+#else
     thread_create(
             luaEngineTaskStack,
             sizeof(luaEngineTaskStack),
