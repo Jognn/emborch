@@ -11,6 +11,7 @@
 /* BLOB */
 #include "bin/b-l072z-lrwan1/application_IoTPlatform/blobs/blob/main.lua.h"
 
+/* Other */
 #include "include/definitons.h"
 #include "include/benchmark_testSamples.h"
 #include "include/native_task.h"
@@ -19,7 +20,7 @@
 /* Lua stack */
 static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
-int const repetitions = 5;
+int const repetitions = 1;
 
 #if (NATIVE_TASK == 0)
 /* CODE */
@@ -39,7 +40,7 @@ void* LuaEngine(void *arg)
     
     for(int i = 0; i < repetitions; ++i)
     {
-        printf("timeSamples[%d] = %lu us\n", i, benchmark_getTimeSample(i));
+        LOG_DEBUG("timeSamples[%d] = %lu us\n", i, benchmark_getTimeSample(i));
     }
 
     return NULL;

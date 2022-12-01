@@ -38,7 +38,7 @@ int l_runScript(char const * const script, unsigned const scriptSize)
     lua_State *L = lua_riot_newstate(luaMem, sizeof(luaMem), NULL);
     if (L == NULL)
     {
-        puts("Cannot create Lua state: not enough memory");
+        puts("[ERROR] Cannot create Lua state: not enough memory");
         return ENOMEM;
     }
 
@@ -62,6 +62,7 @@ int l_runScript(char const * const script, unsigned const scriptSize)
     // Benchmark tests - time execution
     benchmark_setNextTimeSample(stop - start);
 
+    // When we run into memory problems this condition won't pass, and LUA_ERRMEM is returned
     if (pcallResult != LUA_OK)
     {
         printf("[ERROR] Lua script running failed - %d\n", pcallResult);
