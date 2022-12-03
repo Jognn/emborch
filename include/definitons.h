@@ -15,7 +15,7 @@
 #define LOG_DEBUG(...)  if(DEBUG_MODE == 1) { printf(__VA_ARGS__); }
 
 /* LuaEngine task stack size */
-#define LUA_ENGINE_TASK_STACKSIZE_DEFAULT 1500
+#define LUA_ENGINE_TASK_STACKSIZE_DEFAULT 2000
 #if DEBUG_MODE == 1
     #define LUA_ENGINE_TASK_STACKSIZE (LUA_ENGINE_TASK_STACKSIZE_DEFAULT+THREAD_EXTRA_STACKSIZE_PRINTF)
 #else
@@ -23,6 +23,6 @@
 #endif
 
 /* Interpreter stack size */
-#define LUA_MEM_SIZE 9000 // 10 kB
+#define LUA_MEM_SIZE 12000 // 12 kB
 
 #endif //IOTPLATFORM_DEFINITONS_H

@@ -18,10 +18,10 @@
 static char luaMem[LUA_MEM_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 static struct callbackTable luaCallbacks[] = {
+        { .functionCallback = l_initPin, .functionName="init_pin"},
         { .functionCallback = l_togglePin, .functionName = "toggle_pin" },
         { .functionCallback = l_sleep, .functionName = "sleep" },
         { .functionCallback = l_sleepMilli, .functionName = "sleep_ms" },
-        { .functionCallback = l_getTemperatureMock, .functionName = "get_temperature"},
 };
 
 static void initCallbackTable(lua_State *L)
@@ -44,8 +44,6 @@ int l_runScript(char const * const script, unsigned const scriptSize)
 
     initCallbackTable(L);
 
-    gpio_init(GPIO_PIN(7, 0), GPIO_OUT);
-
     int const loadBaseLibResult = lua_riot_openlibs(L, LUAR_LOAD_BASE);
     if(loadBaseLibResult !=  LUAR_LOAD_O_ALL)
     {
@@ -55,12 +53,8 @@ int l_runScript(char const * const script, unsigned const scriptSize)
 
     luaL_loadbuffer(L, script, scriptSize, "Main function");
 
-    uint32_t const start = xtimer_now_usec();
     int const pcallResult = lua_pcall(L, 0, 0, 0);
-    uint32_t const stop = xtimer_now_usec();
 
-    // Benchmark tests - time execution
-    benchmark_setNextTimeSample(stop - start);
 
     // When we run into memory problems this condition won't pass, and LUA_ERRMEM is returned
     if (pcallResult != LUA_OK)
@@ -73,9 +67,15 @@ int l_runScript(char const * const script, unsigned const scriptSize)
     return 0;
 }
 
-int l_getTemperatureMock(lua_State *L)
+int l_initPin(lua_State *L)
 {
-    lua_pushnumber(L, rand());
+    uint32_t const port = luaL_checkinteger(L, 1);
+    uint32_t const pin =  luaL_checkinteger(L, 2);
+    bool const isInput = luaL_checkinteger(L, 3);
+
+    int const result = gpio_init(GPIO_PIN(port, pin), isInput);
+    lua_pushboolean(L, result == 0 ? true : false);
+
     return 1;
 }
 

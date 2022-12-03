@@ -10,7 +10,7 @@
 APPLICATION = IoTPlatform
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= b-l072z-lrwan1
+BOARD ?= nucleo-l476rg
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../RIOT
@@ -38,8 +38,6 @@ QUIET ?= 1
 
 USEMODULE += xtimer
 USEMODULE += periph_gpio_irq
-#USEMODULE += sx1276
-#USEMODULE += semtech_loramac_rx
 
 # If your application is very simple and doesn't use modules that use
 # messaging, it can be disabled to save some memory:
@@ -47,7 +45,6 @@ USEMODULE += periph_gpio_irq
 #DISABLE_MODULE += core_msg
 
 USEPKG += lua
-#USEPKG += semtech-loramac
 
 # generate .lua.h header files of .lua files
 BLOBS += $(wildcard *.lua)

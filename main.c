@@ -1,15 +1,13 @@
-#include <stdio.h>
 #include <errno.h>
 
 /* Board stuff */
-#include "include/board.h"
 #include "include/thread.h"
 
 /* Lua functions */
 #include "include/lua_functions.h"
 
 /* BLOB */
-#include "bin/b-l072z-lrwan1/application_IoTPlatform/blobs/blob/main.lua.h"
+#include "bin/nucleo-l476rg/application_IoTPlatform/blobs/blob/main.lua.h"
 
 /* Other */
 #include "include/definitons.h"
@@ -20,28 +18,17 @@
 /* Lua stack */
 static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
-int const repetitions = 1;
-
 #if (NATIVE_TASK == 0)
 /* CODE */
 void* LuaEngine(void *arg)
 {
     (void) arg;
-    benchmark_init();
 
-    for(int i = 0; i < repetitions; ++i)
-    {
-        puts("Attempting to run main.lua");
-        l_runScript((const char *)main_lua, main_lua_len);
-        puts("Lua interpreter exited");
-        const char* stack = thread_get_stackstart(thread_get_active());
-        printf("STACK USAGE %d = %d\n", i, LUA_ENGINE_TASK_STACKSIZE - thread_measure_stack_free(stack));
-    }
-    
-    for(int i = 0; i < repetitions; ++i)
-    {
-        LOG_DEBUG("timeSamples[%d] = %lu us\n", i, benchmark_getTimeSample(i));
-    }
+    puts("Attempting to run main.lua");
+    l_runScript((const char *)main_lua, main_lua_len);
+    puts("Lua interpreter exited");
+    const char* stack = thread_get_stackstart(thread_get_active());
+    printf("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACKSIZE - thread_measure_stack_free(stack));
 
     return NULL;
 }

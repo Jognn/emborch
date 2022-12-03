@@ -14,7 +14,7 @@ struct callbackTable {
 
 int l_runScript(char const * script, unsigned scriptSize);
 
-int l_getTemperatureMock(lua_State *L);
+int l_initPin(lua_State *L);
 
 int l_togglePin(lua_State *L);
 
