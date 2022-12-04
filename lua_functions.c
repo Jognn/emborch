@@ -1,14 +1,14 @@
 //
 // Created by jogn on 13.10.22.
 //
-#include "include/definitons.h"
+#include "definitons.h"
 
 #if (NATIVE_TASK == 0)
 #include "include/lua_functions.h"
 
-#include "include/gpio.h"
-#include "include/xtimer.h"
-#include "include/lua_run.h"
+#include "periph/gpio.h"
+#include "xtimer.h"
+#include "lua_run.h"
 #include "include/benchmark_testSamples.h"
 
 #include <errno.h>

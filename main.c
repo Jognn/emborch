@@ -1,7 +1,7 @@
 #include <errno.h>
 
 /* Board stuff */
-#include "include/thread.h"
+#include "thread.h"
 
 /* Lua functions */
 #include "include/lua_functions.h"
@@ -10,9 +10,7 @@
 #include "bin/nucleo-l476rg/application_IoTPlatform/blobs/blob/main.lua.h"
 
 /* Other */
-#include "include/definitons.h"
-#include "include/benchmark_testSamples.h"
-#include "include/native_task.h"
+#include "definitons.h"
 #include "string.h"
 
 /* Lua stack */

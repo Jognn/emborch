@@ -43,7 +43,6 @@ USEMODULE += periph_gpio_irq
 # messaging, it can be disabled to save some memory:
 
 #DISABLE_MODULE += core_msg
-
 USEPKG += lua
 
 # generate .lua.h header files of .lua files
