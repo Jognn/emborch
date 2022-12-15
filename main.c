@@ -1,32 +1,32 @@
-#include <errno.h>
+//
+// Created by jogn on 13.10.22
+//
 
-/* Board stuff */
-#include "thread.h"
-
-/* Lua functions */
-#include "include/lua_functions.h"
+/* Definitions */
+#include "definitons.h"
 
 /* BLOB */
 #include "bin/nucleo-l476rg/application_IoTPlatform/blobs/blob/main.lua.h"
 
 /* Other */
-#include "definitons.h"
-#include "string.h"
+#include "include/msg_processor.h"
+#include "include/lua_engine.h"
+#include "thread.h"
+#include <errno.h>
 
-/* Lua stack */
+/* Lua engine stack */
 static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 #if (NATIVE_TASK == 0)
 /* CODE */
-void* LuaEngine(void *arg)
+void* luaEngine(void *arg)
 {
     (void) arg;
 
-    puts("Attempting to run main.lua");
-    l_runScript((const char *)main_lua, main_lua_len);
-    puts("Lua interpreter exited");
-    const char* stack = thread_get_stackstart(thread_get_active());
-    printf("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACKSIZE - thread_measure_stack_free(stack));
+    while(true)
+    {
+        luae_run();
+    }
 
     return NULL;
 }
@@ -52,17 +52,42 @@ void* NativeTask(void *arg)
 }
 #endif
 
+/* Message processor stack */
+static char stack[1500] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+
+void* msgProcessor(void *arg)
+{
+    (void) arg;
+
+    while(true)
+    {
+        msgp_checkUart();
+    }
+
+    return NULL;
+}
+
 int main(void)
 {
+    msgp_init();
 #if (NATIVE_TASK == 0)
     thread_create(
             luaEngineTaskStack,
             sizeof(luaEngineTaskStack),
             THREAD_PRIORITY_MAIN - 1,
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
-            LuaEngine,
+            luaEngine,
             NULL,
             "LUA_TASK"
+    );
+    thread_create(
+            stack,
+            sizeof(stack),
+            THREAD_PRIORITY_MAIN - 2,
+            THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
+            msgProcessor,
+            NULL,
+            "UART_CHECK"
     );
 #else
     thread_create(

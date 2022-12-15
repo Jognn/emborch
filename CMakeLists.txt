@@ -15,7 +15,7 @@ include_directories(modules/lua_engine/include/)
 
 include_directories(include)
 
-add_executable(IoTPlatform main.c lua_functions.c)
+add_executable(IoTPlatform main.c lua_functions.c msg_processor.c lua_engine.c)
 target_include_directories(IoTPlatform PUBLIC $ENV{RIOT})
 add_subdirectory($ENV{RIOT} RIOT)
 

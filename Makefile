@@ -38,6 +38,8 @@ QUIET ?= 1
 
 USEMODULE += xtimer
 USEMODULE += periph_gpio_irq
+USEMODULE += periph_uart
+USEMODULE += isrpipe
 
 # If your application is very simple and doesn't use modules that use
 # messaging, it can be disabled to save some memory:
