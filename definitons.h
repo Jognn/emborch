@@ -23,6 +23,6 @@
 #endif
 
 /* Interpreter stack size */
-#define LUA_MEM_SIZE 12000 // 12 kB
+#define LUA_MEM_SIZE 14000 // 14 kB
 
 #endif //IOTPLATFORM_DEFINITONS_H
