@@ -17,19 +17,6 @@ typedef enum
     eMessageTypeNotSet
 } MessageType;
 
-typedef struct
-{
-    MessageType messageType : 4;
-    uint8_t senderId : 4;
-
-    union
-    {
-
-    };
-
-
-} message_header;
-
 void msgp_init(void);
 
 void msgp_checkUart(void);
