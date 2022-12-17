@@ -7,15 +7,9 @@ class ScriptService:
         self.filename = filename
 
     def _compress_text(self, text: str) -> str:
-        one_line_text = text.replace('\n', ' ').replace('\r', '').split(' ')
-
-        trimmed_text = list()
-        for index, word in enumerate(one_line_text):
-            one_line_text[index].strip()
-            if word != '':
-                trimmed_text.append(word)
-
-        return ' '.join(trimmed_text)
+        one_line_text = text.replace('\n', ' ').replace('\r', '')
+        trimmed_one_line_text = filter(lambda x: x != '', one_line_text.split(' '))
+        return ' '.join(trimmed_one_line_text)
 
     def get_binary_script(self) -> bytearray:
         with open(self.filename, 'r') as lua_script:
