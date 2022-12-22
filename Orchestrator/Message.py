@@ -16,6 +16,12 @@ class Message:
         self.sender = kwargs['sender']
 
 
+class RegisterMessage(Message):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.assigned_id = kwargs['assigned_id']
+
+
 class SendScriptMessage(Message):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
