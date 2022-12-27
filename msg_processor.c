@@ -11,6 +11,7 @@
 #include "string.h"
 
 #define ETB_SIGN 23
+#define LUA_SCRIPT_STANDARD_HEAP_REQUIRED 14
 
 static isrpipe_t uartPipe;
 static uint8_t uartPipeBuffer[BUFFER_SIZE];
@@ -22,6 +23,19 @@ isrpipe_t luaPipe;
 uint8_t luaScript[BUFFER_SIZE];
 cond_t luaScriptReady = COND_INIT;
 
+uint8_t assigned_id = 0;
+uint8_t available_memory = UINT8_MAX;
+
+
+static inline MessageType getMessageType(uint8_t const firstMessageBlock)
+{
+    return ((firstMessageBlock & 0b11110000) >> 4) & 0b00001111;
+}
+
+static inline unsigned char createMessageHeader(MessageType const messageType)
+{
+    return ((messageType & 0b1111) << 4) | (assigned_id & 0b1111);
+}
 
 static void uart_cb(void *arg, uint8_t data)
 {
@@ -37,20 +51,18 @@ static void uart_cb(void *arg, uint8_t data)
     }
 }
 
-static inline MessageType getMessageType(uint8_t const firstMessageBlock)
-{
-    return ((firstMessageBlock & 0b11110000) >> 4) & 0b00001111;
-}
-
 static void interpretMessage(unsigned const readBytes)
 {
     MessageType const messageType = getMessageType(message[0]);
     switch (messageType)
     {
         case eMessageTypeRegister:
-
+            assigned_id = message[1];
+            printf("Assigned_id = %d\n", assigned_id);
+            break;
         case eMessageTypeSendScript:
-            isrpipe_write(&luaPipe, message+1, readBytes-1);
+            available_memory -= LUA_SCRIPT_STANDARD_HEAP_REQUIRED;
+            isrpipe_write(&luaPipe, message + 1, readBytes - 1);
             cond_signal(&luaScriptReady);
             break;
         default:
@@ -80,24 +92,10 @@ void msgp_checkUart(void)
 
 void msgp_register(void)
 {
-    RegisterMessage registerMessage = {
-            .messageType = eMessageTypeRegister,
-            .message_sender = 0,
-            .available_memory = 100,
-    };
-
-    char msg[3];
-    msg[0] = 0x00;
-    msg[1] = 100;
+    unsigned char msg[3];
+    msg[0] = createMessageHeader(eMessageTypeRegister);
+    msg[1] = available_memory;
     msg[2] = ETB_SIGN;
-
-//    for(unsigned i = 0; i < 3; ++i)
-//    {
-//        char temp[2];
-//        temp[0] = msg[i];
-//        temp[1] = '\0';
-//        puts(temp);
-//    }
 
     uart_write(UART_DEV(0), msg, sizeof(msg));
 }

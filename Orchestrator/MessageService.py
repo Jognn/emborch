@@ -66,7 +66,10 @@ class MessageService:
     async def read_message(self, node: Node):
         while True:
             is_binary, line = await SerialConnector.read_bytes(node)
-            logging.info(f"Received new {'binary' if is_binary else 'text'} message from node {node.name} - {line}")
+
+            logging.info(
+                f"{'Binary' if is_binary else 'Text'} message from {node.name}"
+                f" -> {line if is_binary else line[:-1].decode()}")
 
             if is_binary:
                 if msg_response := self._interpret_message_and_respond(line, node):
@@ -80,7 +83,7 @@ class MessageService:
                 continue
             message = await node.send_queue.get()
             binary_message = self._generate_binary_message(message)
-            logging.info(f"Sending new binary message to {node.name}: \n{message}")
+            logging.info(f"Sending new binary message to {node.name} -> {binary_message}")
             node.port.write(binary_message)
 
 
