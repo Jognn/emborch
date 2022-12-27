@@ -47,6 +47,8 @@ static void interpretMessage(unsigned const readBytes)
     MessageType const messageType = getMessageType(message[0]);
     switch (messageType)
     {
+        case eMessageTypeRegister:
+
         case eMessageTypeSendScript:
             isrpipe_write(&luaPipe, message+1, readBytes-1);
             cond_signal(&luaScriptReady);
@@ -74,4 +76,28 @@ void msgp_checkUart(void)
     unsigned available = tsrb_avail(&uartPipe.tsrb);
     isrpipe_read(&uartPipe, message, available);
     interpretMessage(available);
+}
+
+void msgp_register(void)
+{
+    RegisterMessage registerMessage = {
+            .messageType = eMessageTypeRegister,
+            .message_sender = 0,
+            .available_memory = 100,
+    };
+
+    char msg[3];
+    msg[0] = 0x00;
+    msg[1] = 100;
+    msg[2] = ETB_SIGN;
+
+//    for(unsigned i = 0; i < 3; ++i)
+//    {
+//        char temp[2];
+//        temp[0] = msg[i];
+//        temp[1] = '\0';
+//        puts(temp);
+//    }
+
+    uart_write(UART_DEV(0), msg, sizeof(msg));
 }

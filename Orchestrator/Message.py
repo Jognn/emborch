@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import TypeVar
 
 ORCHESTRATOR_ID = 15
 
@@ -26,3 +27,6 @@ class SendScriptMessage(Message):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.payload = kwargs['payload']
+
+
+M = TypeVar('M', bound=Message)

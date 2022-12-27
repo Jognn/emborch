@@ -13,6 +13,7 @@
 #include "include/lua_engine.h"
 #include "thread.h"
 #include <errno.h>
+#include <xtimer.h>
 
 /* Lua engine stack */
 static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
@@ -67,6 +68,14 @@ void* msgProcessor(void *arg)
     return NULL;
 }
 
+void registerNode(void *arg)
+{
+    (void) arg;
+
+    msgp_register();
+
+}
+
 int main(void)
 {
     msgp_init();
@@ -89,6 +98,9 @@ int main(void)
             NULL,
             "UART_CHECK"
     );
+    xtimer_sleep(5);
+    msgp_register();
+
 #else
     thread_create(
             luaEngineTaskStack,

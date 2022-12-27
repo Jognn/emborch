@@ -6,7 +6,7 @@ from serial.tools.list_ports_linux import comports
 
 from Orchestrator.NodeRegistry import Node
 
-EOT_SIGN = b'\x1F'
+EOT_SIGN = b'\x17'
 EOL_SIGN = b'\x0A'
 
 
