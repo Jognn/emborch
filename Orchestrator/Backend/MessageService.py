@@ -2,9 +2,10 @@ import asyncio
 import logging
 from typing import Type, TypeVar
 
-from Orchestrator.Message import Message, SendScriptMessage, MessageType, RegisterMessage
-from Orchestrator.NodeRegistry import Node, NodeRegistry
-from Orchestrator.SerialConnector import SerialConnector, EOT_SIGN
+from Orchestrator.Backend.Message import Message, SendScriptMessage, MessageType, RegisterMessage
+from Orchestrator.Backend.Node import Node
+from Orchestrator.Backend.NodeRegistry import NodeRegistry
+from Orchestrator.Backend.SerialConnector import SerialConnector, EOT_SIGN
 
 MESSAGE_TYPE_MASK = 240
 SENDER_ID_MASK = 15
@@ -67,19 +68,22 @@ class MessageService:
         while True:
             is_binary, line = await SerialConnector.read_bytes(node)
 
-            logging.info(
-                f"{'Binary' if is_binary else 'Text'} message from {node.name}"
-                f" -> {line if is_binary else line[:-1].decode()}")
+            if line:
+                logging.info(
+                    f"{'Binary' if is_binary else 'Text'} message from {node.name}"
+                    f" -> {line if is_binary else line[:-1].decode('ISO-8859-1')}")
 
-            if is_binary:
-                if msg_response := self._interpret_message_and_respond(line, node):
-                    await node.send_queue.put(msg_response)
-                    await asyncio.sleep(2)
+                if is_binary:
+                    if msg_response := self._interpret_message_and_respond(line, node):
+                        await node.send_queue.put(msg_response)
+                await asyncio.sleep(0.5)
+            else:
+                await asyncio.sleep(3)
 
     async def send_message(self, node: Node):
         while True:
             if node.send_queue.empty():
-                await asyncio.sleep(1)
+                await asyncio.sleep(5)
                 continue
             message = await node.send_queue.get()
             binary_message = self._generate_binary_message(message)
