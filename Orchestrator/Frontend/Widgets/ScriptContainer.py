@@ -1,6 +1,6 @@
 from tkinter import Label, Button
 
-from Orchestrator.Backend.ScriptDispatcher import script_dispatcher
+from Orchestrator.Backend.ScriptDispatcher.ScriptDispatcher import script_dispatcher
 from Orchestrator.Frontend.Widgets.Widget import Widget
 
 

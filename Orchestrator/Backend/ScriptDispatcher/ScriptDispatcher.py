@@ -1,7 +1,7 @@
-from Orchestrator.Backend.Message import SendScriptMessage, MessageType, ORCHESTRATOR_ID
-from Orchestrator.Backend.Node import Node
-from Orchestrator.Backend.ScriptService import script_service
-from Orchestrator.Backend.SerialConnector import serial_connector
+from Orchestrator.Backend.Connector.Node import Node
+from Orchestrator.Backend.Connector.SerialConnector import serial_connector
+from Orchestrator.Backend.MessageService.Message import SendScriptMessage, MessageType, ORCHESTRATOR_ID
+from Orchestrator.Backend.ScriptDispatcher.ScriptService import script_service
 
 
 class ScriptDispatcher:

@@ -3,14 +3,13 @@
 import asyncio
 import logging
 
-from Orchestrator.Backend.MessageService import message_service
-from Orchestrator.Backend.SerialConnector import serial_connector
+from Orchestrator.Backend.Connector.SerialConnector import serial_connector
+from Orchestrator.Backend.MessageService.MessageService import message_service
 from Orchestrator.Frontend.AsyncTk import AsyncTk
 from Orchestrator.Frontend.Widgets.ScriptContainer import ScriptContainer
 
 
 class App(AsyncTk):
-    "User's app"
 
     def __init__(self):
         super().__init__()
@@ -37,7 +36,3 @@ if __name__ == '__main__':
         level=logging.INFO,
         datefmt='%Y-%m-%d %H:%M:%S')
     asyncio.run(main())
-
-# lua_script = script_service.get_binary_script()
-# send_script_msg = SendScriptMessage(type=MessageType.SendScript, sender=ORCHESTRATOR_ID, payload=lua_script)
-# message_service.send_message(send_script_msg)

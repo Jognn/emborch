@@ -2,10 +2,10 @@ import asyncio
 import logging
 from typing import Type, TypeVar
 
-from Orchestrator.Backend.Message import Message, SendScriptMessage, MessageType, RegisterMessage
-from Orchestrator.Backend.Node import Node
-from Orchestrator.Backend.NodeRegistry import NodeRegistry
-from Orchestrator.Backend.SerialConnector import SerialConnector, EOT_SIGN
+from Orchestrator.Backend.Connector.Node import Node
+from Orchestrator.Backend.Connector.SerialConnector import SerialConnector, EOT_SIGN
+from Orchestrator.Backend.MessageService.Message import Message, SendScriptMessage, MessageType, RegisterMessage
+from Orchestrator.Backend.NodeRegistry.NodeRegistry import NodeRegistry
 
 MESSAGE_TYPE_MASK = 240
 SENDER_ID_MASK = 15
