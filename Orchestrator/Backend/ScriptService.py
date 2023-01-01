@@ -25,6 +25,8 @@ class ScriptService:
         return binary_script
 
 
+script_service = ScriptService("main.lua")
+
 if __name__ == "__main__":
     script_srv = ScriptService()
     result = script_srv.get_binary_script()

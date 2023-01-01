@@ -34,5 +34,7 @@ class SerialConnector:
         self.nodes = [Node(name) for name in comport_names]
 
 
+serial_connector = SerialConnector()
+
 if __name__ == '__main__':
     deviceService = SerialConnector()

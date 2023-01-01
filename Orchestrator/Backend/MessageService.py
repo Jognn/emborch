@@ -91,6 +91,8 @@ class MessageService:
             node.port.write(binary_message)
 
 
+message_service = MessageService()
+
 if __name__ == "__main__":
     send_script_msg = SendScriptMessage(type=MessageType.SendScript,
                                         sender=15,

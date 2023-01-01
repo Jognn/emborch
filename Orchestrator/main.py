@@ -3,14 +3,10 @@
 import asyncio
 import logging
 
-from Orchestrator.Backend.MessageService import MessageService
-from Orchestrator.Backend.ScriptService import ScriptService
-from Orchestrator.Backend.SerialConnector import SerialConnector
+from Orchestrator.Backend.MessageService import message_service
+from Orchestrator.Backend.SerialConnector import serial_connector
 from Orchestrator.Frontend.AsyncTk import AsyncTk
-
-serial_connector = SerialConnector()
-message_service = MessageService()
-script_service = ScriptService("main.lua")
+from Orchestrator.Frontend.Widgets.ScriptContainer import ScriptContainer
 
 
 class App(AsyncTk):
@@ -26,7 +22,8 @@ class App(AsyncTk):
         logging.info("Orchestrator has started :)")
 
     def create_interface(self):
-        pass
+        a = ScriptContainer(self)
+        a.show_items()
 
 
 async def main():
