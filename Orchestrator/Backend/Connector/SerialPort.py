@@ -19,7 +19,6 @@ class SerialPort(Serial):
         end_sign = (EOL_SIGN, EOT_SIGN)
         line = bytearray()
         timeout = Timeout(self._timeout)
-        c = None
         while True:
             c = self.read(1)
             if c:
@@ -31,6 +30,9 @@ class SerialPort(Serial):
             if timeout.expired():
                 break
 
-        is_binary = c == EOT_SIGN
-
+        is_binary = (c == EOT_SIGN)
         return is_binary, line
+
+    def write(self, binary_message: bytearray) -> int:
+        binary_message.extend(EOT_SIGN)
+        return super().write(binary_message)

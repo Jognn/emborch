@@ -21,7 +21,6 @@ class Connector:
             runners.append(self.read_binary_message(port_name))
 
     def send_binary_message(self, node_id: int, binary_message: bytearray) -> None:
-        # port_name = self.port_node_map.get(node_id)
         port_name = self.port_names[0]
         self.physical_connector.send_message(port_name, binary_message)
 
@@ -36,15 +35,6 @@ class Connector:
                     f" -> {line if is_binary else line[:-1].decode('ISO-8859-1')}")
 
                 if is_binary:
-                    # if msg_response := message_service.interpret_message_and_respond(line):
-                    #     if msg_response.type == MessageType.Register:
-                    #         self.port_node_map[msg_response.assigned_id] = port_name
-                    #
-                    #     binary_message = message_service.generate_binary_message(msg_response)
-                    #     binary_message.extend(EOT_SIGN)
-                    #
-                    #     logging.info(f"Sending new binary message to {port_name} -> {binary_message}")
-                    #     await self.physical_connector.put_message_into_port(port_name, binary_message)
                     # TODO: Handle the 'Full' exception?
                     self.message_queue.put_nowait(line)
                 await asyncio.sleep(0.5)

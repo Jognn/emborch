@@ -3,7 +3,7 @@ from typing import List
 from serial.tools.list_ports_linux import comports
 
 from Orchestrator.Backend.Connector.PhysicalConnector import PhysicalConnector
-from Orchestrator.Backend.Connector.SerialPort import SerialPort, EOT_SIGN
+from Orchestrator.Backend.Connector.SerialPort import SerialPort
 
 
 class SerialConnector(PhysicalConnector):
@@ -16,12 +16,9 @@ class SerialConnector(PhysicalConnector):
         serial_port = next(filter(lambda port: port.name == port_name, self.serial_ports))
         return await serial_port.read_bytes()
 
-    def send_message(self, port_name: str, binary_message: bytearray):
-        binary_message.extend(EOT_SIGN)
-
+    def send_message(self, port_name: str, binary_message: bytearray) -> None:
         # TODO: What if it does find a port with the provided port name? :)
         serial_port = next(filter(lambda port: port.name == port_name, self.serial_ports))
-        # serial_port.send_queue.put_nowait(binary_message)
         serial_port.write(binary_message)
 
     def get_port_names(self) -> List[str]:
