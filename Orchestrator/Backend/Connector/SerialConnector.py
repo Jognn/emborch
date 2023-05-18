@@ -1,26 +1,42 @@
-from typing import List
+import asyncio
+import logging
+from asyncio import Queue
+from typing import List, Coroutine
 
 from serial.tools.list_ports_linux import comports
 
-from Orchestrator.Backend.Connector.PhysicalConnector import PhysicalConnector
+from Orchestrator.Backend.Connector.Connector import Connector
 from Orchestrator.Backend.Connector.SerialPort import SerialPort
 
 
-class SerialConnector(PhysicalConnector):
+class SerialConnector(Connector):
+    def __init__(self, message_queue: Queue):
+        super().__init__(message_queue)
+        serial_port_names = [comport.name for comport in comports() if "ACM" in comport.name]
+        self.serial_ports = [SerialPort(name) for name in serial_port_names]
 
-    def __init__(self):
-        comport_names = [comport.name for comport in comports() if "ACM" in comport.name]
-        self.serial_ports = [SerialPort(name) for name in comport_names]
+    def initialize(self, runners: List[Coroutine]) -> None:
+        for port in self.serial_ports:
+            runners.append(self._read_binary_message(port.name))
 
-    async def read_message(self, port_name: str) -> (bool, bytearray):
-        serial_port = next(filter(lambda port: port.name == port_name, self.serial_ports))
-        return await serial_port.read_bytes()
+    def send_binary_message(self, node_id: int, binary_message: bytearray) -> None:
+        # TODO: find by id :)
+        self.serial_ports[0].write(binary_message)
 
-    def send_message(self, port_name: str, binary_message: bytearray) -> None:
-        # TODO: What if it does find a port with the provided port name? :)
-        serial_port = next(filter(lambda port: port.name == port_name, self.serial_ports))
-        serial_port.write(binary_message)
+    async def _read_binary_message(self, port_name: str) -> None:
+        while True:
+            serial_port = next(filter(lambda port: port.name == port_name, self.serial_ports))
+            is_binary, line = await serial_port.read_bytes()
 
-    def get_port_names(self) -> List[str]:
-        # TODO: Shouldn't this only return names of comports with associated SerialPort objects?
-        return [comport.name for comport in comports() if "ACM" in comport.name]
+            if line:
+                message_type_name = 'Binary' if is_binary else 'Text'
+                logging.info(
+                    f"{message_type_name} message from {port_name}"
+                    f" -> {line if is_binary else line[:-1].decode('ISO-8859-1')}")
+
+                if is_binary:
+                    # TODO: Handle the 'Full' exception?
+                    self.message_queue.put_nowait(line)
+                await asyncio.sleep(0.5)
+            else:
+                await asyncio.sleep(3)

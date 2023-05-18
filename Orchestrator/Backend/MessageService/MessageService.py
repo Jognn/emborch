@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from asyncio import Queue
-from typing import Type, TypeVar, Optional
+from typing import TypeVar, Optional
 
 from Orchestrator.Backend.Connector.Connector import Connector
 from Orchestrator.Backend.MessageService.Message import Message, SendScriptMessage, MessageType, RegisterMessage
@@ -14,7 +14,7 @@ ORCHESTRATOR_ID = 15
 
 
 class MessageService:
-    M = TypeVar('M', bound=Message)
+    MessageType = TypeVar('MessageType', bound=Message)
 
     def __init__(self, connector: Connector, message_queue: Queue, node_registry: NodeRegistry):
         self.connector = connector
@@ -41,7 +41,7 @@ class MessageService:
         binary_msg = self._generate_binary_message(send_script_msg)
         self.connector.send_binary_message(node.node_id, binary_msg)
 
-    def _generate_binary_message(self, message: Type[M]) -> bytearray:
+    def _generate_binary_message(self, message: Message) -> bytearray:
         binary_message = bytearray()
 
         # Header

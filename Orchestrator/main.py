@@ -18,7 +18,7 @@ class App(AsyncTk):
         super().__init__()
         self.create_ui()
         self.script_dispatcher = script_dispatcher
-        connector.start_ports(self.runners)
+        connector.initialize(self.runners)
         self.runners.append(message_service.poll_messages())
 
         logging.info("Orchestrator has started :)")
@@ -29,7 +29,7 @@ class App(AsyncTk):
 
 
 async def main(application: App):
-    await app.run()
+    await application.run()
 
 
 if __name__ == '__main__':
@@ -39,8 +39,7 @@ if __name__ == '__main__':
         datefmt='%Y-%m-%d %H:%M:%S')
 
     message_queue = Queue()
-    serial_connector = SerialConnector()
-    connector = Connector(physical_connector=serial_connector, message_queue=message_queue)
+    connector = SerialConnector(message_queue=message_queue)
 
     node_registry = NodeRegistry()
     message_service = MessageService(connector=connector, message_queue=message_queue, node_registry=node_registry)
