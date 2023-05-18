@@ -31,12 +31,11 @@ class MessageService:
             message = self._interpret_message_and_generate_response(binary_message)
             if message is None:
                 continue
-
             if message.type == MessageType.Register:
                 binary_message_response = self._generate_binary_message(message)
                 self.connector.send_binary_message(message.assigned_id, binary_message_response)
 
-    def send_script_to_node(self, node: Node, binary_script: bytearray):
+    def send_script_to_node(self, node: Node, binary_script: bytearray) -> None:
         send_script_msg = SendScriptMessage(type=MessageType.SendScript, sender=ORCHESTRATOR_ID, payload=binary_script)
         binary_msg = self._generate_binary_message(send_script_msg)
         self.connector.send_binary_message(node.node_id, binary_msg)

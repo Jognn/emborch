@@ -33,7 +33,6 @@ class SerialConnector(Connector):
                 logging.info(
                     f"{message_type_name} message from {port_name}"
                     f" -> {line if is_binary else line[:-1].decode('ISO-8859-1')}")
-
                 if is_binary:
                     # TODO: Handle the 'Full' exception?
                     self.message_queue.put_nowait(line)
