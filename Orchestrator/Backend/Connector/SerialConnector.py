@@ -1,40 +1,29 @@
-from serial import Timeout
+from typing import List
+
 from serial.tools.list_ports_linux import comports
 
-from Orchestrator.Backend.NodeRegistry.NodeRegistry import Node
-
-EOT_SIGN = b'\x17'
-EOL_SIGN = b'\x0A'
+from Orchestrator.Backend.Connector.PhysicalConnector import PhysicalConnector
+from Orchestrator.Backend.Connector.SerialPort import SerialPort, EOT_SIGN
 
 
-class SerialConnector:
-    @classmethod
-    async def read_bytes(cls, node: Node) -> (bool, bytearray):
-        end_sign = (EOL_SIGN, EOT_SIGN)
-        line = bytearray()
-        timeout = Timeout(node.port._timeout)
-        c = None
-        while True:
-            c = node.port.read(1)
-            if c:
-                line += c
-                if c in end_sign:
-                    break
-            else:
-                break
-            if timeout.expired():
-                break
-
-        is_binary = c == EOT_SIGN
-
-        return is_binary, line
+class SerialConnector(PhysicalConnector):
 
     def __init__(self):
         comport_names = [comport.name for comport in comports() if "ACM" in comport.name]
-        self.nodes = [Node(name) for name in comport_names]
+        self.serial_ports = [SerialPort(name) for name in comport_names]
 
+    async def read_message(self, port_name: str) -> (bool, bytearray):
+        serial_port = next(filter(lambda port: port.name == port_name, self.serial_ports))
+        return await serial_port.read_bytes()
 
-serial_connector = SerialConnector()
+    def send_message(self, port_name: str, binary_message: bytearray):
+        binary_message.extend(EOT_SIGN)
 
-if __name__ == '__main__':
-    deviceService = SerialConnector()
+        # TODO: What if it does find a port with the provided port name? :)
+        serial_port = next(filter(lambda port: port.name == port_name, self.serial_ports))
+        # serial_port.send_queue.put_nowait(binary_message)
+        serial_port.write(binary_message)
+
+    def get_port_names(self) -> List[str]:
+        # TODO: Shouldn't this only return names of comports with associated SerialPort objects?
+        return [comport.name for comport in comports() if "ACM" in comport.name]

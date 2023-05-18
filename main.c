@@ -19,18 +19,20 @@
 static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 #if (NATIVE_TASK == 0)
+
 /* CODE */
-void* luaEngine(void *arg)
+void *luaEngine(void *arg)
 {
     (void) arg;
 
-    while(true)
+    while (true)
     {
         luae_run();
     }
 
     return NULL;
 }
+
 #endif
 
 #if (NATIVE_TASK == 1)
@@ -56,11 +58,11 @@ void* NativeTask(void *arg)
 /* Message processor stack */
 static char stack[1500] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
-void* msgProcessor(void *arg)
+void *msgProcessor(void *arg)
 {
     (void) arg;
 
-    while(true)
+    while (true)
     {
         msgp_checkUart();
     }
@@ -98,6 +100,8 @@ int main(void)
             NULL,
             "UART_CHECK"
     );
+
+    // Register 5 seconds after startup
     xtimer_sleep(5);
     msgp_register();
 

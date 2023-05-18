@@ -21,10 +21,10 @@ extern uint8_t luaScript[BUFFER_SIZE];
 static char luaMem[LUA_MEM_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 static struct callbackTable luaCallbacks[] = {
-        { .functionCallback = l_initPin, .functionName="init_pin"},
-        { .functionCallback = l_togglePin, .functionName = "toggle_pin" },
-        { .functionCallback = l_sleep, .functionName = "sleep" },
-        { .functionCallback = l_sleepMilli, .functionName = "sleep_ms" },
+        {.functionCallback = l_initPin, .functionName="init_pin"},
+        {.functionCallback = l_togglePin, .functionName = "toggle_pin"},
+        {.functionCallback = l_sleep, .functionName = "sleep"},
+        {.functionCallback = l_sleepMilli, .functionName = "sleep_ms"},
 };
 
 static void initCallbackTable(lua_State *L)
@@ -36,10 +36,10 @@ static void initCallbackTable(lua_State *L)
     }
 }
 
-static int l_runScript(char const * const script, unsigned const scriptSize)
+static int l_runScript(char const *const script, unsigned const scriptSize)
 {
     lua_State *L = lua_riot_newstate(luaMem, sizeof(luaMem), NULL);
-    if (L == NULL)
+    if(L == NULL)
     {
         puts("[ERROR] Cannot create Lua state: not enough memory");
         return ENOMEM;
@@ -48,7 +48,7 @@ static int l_runScript(char const * const script, unsigned const scriptSize)
     initCallbackTable(L);
 
     int const loadBaseLibResult = lua_riot_openlibs(L, LUAR_LOAD_BASE);
-    if(loadBaseLibResult !=  LUAR_LOAD_O_ALL)
+    if(loadBaseLibResult != LUAR_LOAD_O_ALL)
     {
         printf("[ERROR] Trying to load library - %d\n", loadBaseLibResult);
         return EINTR;
@@ -59,7 +59,7 @@ static int l_runScript(char const * const script, unsigned const scriptSize)
     int const pcallResult = lua_pcall(L, 0, 0, 0);
 
     // When we run into memory problems this condition won't pass, and LUA_ERRMEM is returned
-    if (pcallResult != LUA_OK)
+    if(pcallResult != LUA_OK)
     {
         printf("[ERROR] Lua script running failed - %d\n", pcallResult);
         return EINTR;
