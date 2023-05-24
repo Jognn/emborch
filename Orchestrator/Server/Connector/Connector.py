@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from asyncio import Queue
 from typing import Dict, TypeVar, Coroutine, List
 
-from Orchestrator.Backend.MessageService.Message import Message
+from Orchestrator.Server.MessageService.Message import Message
 
 
 class Connector(ABC):

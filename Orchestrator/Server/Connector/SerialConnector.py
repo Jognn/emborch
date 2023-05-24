@@ -5,8 +5,8 @@ from typing import List, Coroutine
 
 from serial.tools.list_ports_linux import comports
 
-from Orchestrator.Backend.Connector.Connector import Connector
-from Orchestrator.Backend.Connector.SerialPort import SerialPort
+from Orchestrator.Server.Connector.Connector import Connector
+from Orchestrator.Server.Connector.SerialPort import SerialPort
 
 
 class SerialConnector(Connector):

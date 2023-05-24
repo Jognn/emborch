@@ -3,10 +3,10 @@ import logging
 from asyncio import Queue
 from typing import TypeVar, Optional
 
-from Orchestrator.Backend.Connector.Connector import Connector
-from Orchestrator.Backend.MessageService.Message import Message, SendScriptMessage, MessageType, RegisterMessage
-from Orchestrator.Backend.NodeRegistry import NodeRegistry
-from Orchestrator.Backend.NodeRegistry.Node import Node
+from Orchestrator.Server.Connector.Connector import Connector
+from Orchestrator.Server.MessageService.Message import Message, SendScriptMessage, MessageType, RegisterMessage
+from Orchestrator.Server.NodeRegistry import NodeRegistry
+from Orchestrator.Server.NodeRegistry.Node import Node
 
 MESSAGE_TYPE_MASK = 240
 SENDER_ID_MASK = 15

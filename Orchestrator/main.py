@@ -4,28 +4,35 @@ import asyncio
 import logging
 from asyncio import Queue
 
-from Orchestrator.Backend.Connector.Connector import Connector
-from Orchestrator.Backend.Connector.SerialConnector import SerialConnector
-from Orchestrator.Backend.MessageService.MessageService import MessageService
-from Orchestrator.Backend.NodeRegistry.NodeRegistry import NodeRegistry
-from Orchestrator.Backend.ScriptDispatcher.ScriptDispatcher import ScriptDispatcher
-from Orchestrator.Frontend.AsyncTk import AsyncTk
-from Orchestrator.Frontend.Widgets.ScriptContainer import ScriptContainer
+from Orchestrator.Dashboard.AsyncTk import AsyncTk
+from Orchestrator.Dashboard.Widgets.NodeContainer import NodeContainer
+from Orchestrator.Dashboard.Widgets.ScriptContainer import ScriptContainer
+from Orchestrator.Server.Connector.Connector import Connector
+from Orchestrator.Server.Connector.SerialConnector import SerialConnector
+from Orchestrator.Server.MessageService.MessageService import MessageService
+from Orchestrator.Server.NodeRegistry.NodeRegistry import NodeRegistry
+from Orchestrator.Server.ScriptDispatcher.ScriptDispatcher import ScriptDispatcher
+from Orchestrator.Server.ScriptDispatcher.ScriptService import ScriptService
 
 
 class App(AsyncTk):
     def __init__(self, connector: Connector, script_dispatcher: ScriptDispatcher, message_service: MessageService):
         super().__init__()
-        self.create_ui()
-        self.script_dispatcher = script_dispatcher
+
+        # Backend stuff
         connector.initialize(self.runners)
         self.runners.append(message_service.poll_messages())
 
-        logging.info("Orchestrator has started :)")
+        # Dashboard stuff
+        self.create_ui()
+        self.script_dispatcher = script_dispatcher
+
+        logging.info("emborch has started :)")
 
     def create_ui(self):
-        a = ScriptContainer(self)
-        a.show_items()
+        self.title("Emborch dashboard")
+        node_container = NodeContainer(self)
+        script_container = ScriptContainer(self)
 
 
 async def main(application: App):
@@ -43,7 +50,10 @@ if __name__ == '__main__':
 
     node_registry = NodeRegistry()
     message_service = MessageService(connector=connector, message_queue=message_queue, node_registry=node_registry)
-    script_dispatcher = ScriptDispatcher(message_service=message_service, node_registry=node_registry)
+    script_service = ScriptService()
+    script_dispatcher = ScriptDispatcher(message_service=message_service,
+                                         node_registry=node_registry,
+                                         script_service=script_service)
 
     app = App(connector=connector, script_dispatcher=script_dispatcher, message_service=message_service)
     asyncio.run(main(app))

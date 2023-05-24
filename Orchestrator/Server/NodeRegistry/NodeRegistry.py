@@ -1,4 +1,4 @@
-from Orchestrator.Backend.NodeRegistry.Node import Node
+from Orchestrator.Server.NodeRegistry.Node import Node
 
 
 class NodeRegistry:
