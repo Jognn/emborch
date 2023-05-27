@@ -5,8 +5,8 @@ import logging
 from asyncio import Queue
 
 from Orchestrator.Dashboard.AsyncTk import AsyncTk
-from Orchestrator.Dashboard.Widgets.NodeContainer import NodeContainer
-from Orchestrator.Dashboard.Widgets.ScriptContainer import ScriptContainer
+from Orchestrator.Dashboard.Containers.NodeContainer import NodeContainer
+from Orchestrator.Dashboard.Containers.ScriptContainer import ScriptContainer
 from Orchestrator.Server.Connector.Connector import Connector
 from Orchestrator.Server.Connector.SerialConnector import SerialConnector
 from Orchestrator.Server.MessageService.MessageService import MessageService
@@ -19,7 +19,7 @@ class App(AsyncTk):
     def __init__(self, connector: Connector, script_dispatcher: ScriptDispatcher, message_service: MessageService):
         super().__init__()
 
-        # Backend stuff
+        # Server stuff
         connector.initialize(self.runners)
         self.runners.append(message_service.poll_messages())
 
