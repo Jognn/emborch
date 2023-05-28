@@ -14,7 +14,7 @@ class AsyncTk(Tk):
         """ asyncio 'compatible' tk event loop? """
         while self.running:
             self.update()
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0)
 
     def stop(self) -> None:
         self.running = False

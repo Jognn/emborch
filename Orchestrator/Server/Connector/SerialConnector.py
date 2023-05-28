@@ -36,6 +36,5 @@ class SerialConnector(Connector):
                 if is_binary:
                     # TODO: Handle the 'Full' exception?
                     self.message_queue.put_nowait(line)
-                await asyncio.sleep(0.5)
             else:
                 await asyncio.sleep(3)

@@ -13,6 +13,7 @@ from Orchestrator.Server.MessageService.MessageService import MessageService
 from Orchestrator.Server.NodeRegistry.NodeRegistry import NodeRegistry
 from Orchestrator.Server.ScriptDispatcher.ScriptDispatcher import ScriptDispatcher
 from Orchestrator.Server.ScriptDispatcher.ScriptService import ScriptService
+from Orchestrator.ServerRelay import ServerRelay
 
 
 class App(AsyncTk):
@@ -46,14 +47,25 @@ if __name__ == '__main__':
         datefmt='%Y-%m-%d %H:%M:%S')
 
     message_queue = Queue()
+
+    # Connector
     connector = SerialConnector(message_queue=message_queue)
 
+    # Node Registry
     node_registry = NodeRegistry()
+
+    # Message Service
     message_service = MessageService(connector=connector, message_queue=message_queue, node_registry=node_registry)
+
+    # Server Relay
+    server_relay = ServerRelay()
+
+    # Script dispatcher
     script_service = ScriptService()
     script_dispatcher = ScriptDispatcher(message_service=message_service,
                                          node_registry=node_registry,
                                          script_service=script_service)
 
+    # Application
     app = App(connector=connector, script_dispatcher=script_dispatcher, message_service=message_service)
     asyncio.run(main(app))

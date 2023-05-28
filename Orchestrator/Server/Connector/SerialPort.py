@@ -1,6 +1,6 @@
 import asyncio
 
-from serial import Serial, Timeout
+from serial import Serial
 
 EOT_SIGN = b'\x17'
 EOL_SIGN = b'\x0A'
@@ -10,7 +10,7 @@ DEVICE_DIRECTORY = "/dev/"
 
 class SerialPort(Serial):
     def __init__(self, name: str):
-        super().__init__(DEVICE_DIRECTORY + name, baudrate=115200, timeout=2.0)
+        super().__init__(DEVICE_DIRECTORY + name, baudrate=115200, timeout=0.5)
         self.name: str = name
         self.send_queue = asyncio.Queue()
         self.flush()
@@ -18,16 +18,13 @@ class SerialPort(Serial):
     async def read_bytes(self) -> (bool, bytearray):
         end_sign = (EOL_SIGN, EOT_SIGN)
         line = bytearray()
-        timeout = Timeout(self._timeout)
         while True:
-            c = self.read(1)
+            c = self.read()
             if c:
                 line += c
                 if c in end_sign:
                     break
             else:
-                break
-            if timeout.expired():
                 break
 
         is_binary = (c == EOT_SIGN)
