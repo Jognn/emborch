@@ -17,5 +17,9 @@ class Connector(ABC):
         pass
 
     @abstractmethod
+    def node_registered(self, node_id: int) -> None:
+        pass
+
+    @abstractmethod
     def send_binary_message(self, node_id: int, binary_message: bytearray) -> None:
         pass

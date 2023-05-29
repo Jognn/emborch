@@ -11,9 +11,6 @@ class ScriptContainer:
         frame = Frame(root)
         frame.pack(padx=10, pady=10)
 
-        label = Label(frame, text="In order to send your script press the below button")
-        label.pack()
-
         # Script text
         self.text = Text(frame)
         self.text.insert('1.0', DEFAULT_SCRIPT_TEXT)
@@ -30,6 +27,7 @@ class ScriptContainer:
         self.required_memory_entry.insert(0, "12000")
         self.required_memory_entry.pack(side=RIGHT, padx=5)
 
+        # Send script button
         button = Button(root, text="Send script", command=self.send_script)
         button.pack(pady=3)
 

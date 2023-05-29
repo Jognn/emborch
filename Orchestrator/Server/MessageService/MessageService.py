@@ -37,10 +37,14 @@ class MessageService(EventComponent):
         self.connector.send_binary_message(node.node_id, binary_msg)
 
     def send_register_result(self, node: Optional[Node]) -> None:
+        if node is not None:
+            self.connector.node_registered(node.node_id)
+
         register_message = RegisterMessage(type=MessageType.Register,
                                            sender=ORCHESTRATOR_ID,
                                            assigned_id=node.node_id if node is not None else ORCHESTRATOR_ID)
         binary_message_response = self._generate_binary_message(register_message)
+
         self.connector.send_binary_message(register_message.assigned_id, binary_message_response)
 
     def _generate_binary_message(self, message: Message) -> bytearray:

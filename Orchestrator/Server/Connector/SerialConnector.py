@@ -14,27 +14,44 @@ class SerialConnector(Connector):
         super().__init__(message_queue)
         serial_port_names = [comport.name for comport in comports() if "ACM" in comport.name]
         self.serial_ports = [SerialPort(name) for name in serial_port_names]
+        self.ports_waiting: List[SerialPort] = []
 
     def initialize(self, runners: List[Coroutine]) -> None:
         for port in self.serial_ports:
-            runners.append(self._read_binary_message(port.name))
+            runners.append(self._read_binary_message(port))
 
     def send_binary_message(self, node_id: int, binary_message: bytearray) -> None:
-        # TODO: find by id :)
-        self.serial_ports[0].write(binary_message)
+        port = next(filter(lambda x: x.node_id == node_id, self.serial_ports), None)
+        if port is not None:
+            port.write(binary_message)
+        else:
+            logging.error(f"[Connector] Could not find a port with node_id={node_id}. Node not registered yet?")
 
-    async def _read_binary_message(self, port_name: str) -> None:
+    def node_registered(self, node_id: int) -> None:
+        registered_port = self.ports_waiting.pop(0)
+        registered_port.node_id = node_id
+
+    async def _read_binary_message(self, port: SerialPort) -> None:
         while True:
-            serial_port = next(filter(lambda port: port.name == port_name, self.serial_ports))
+            serial_port = next(filter(lambda x: x.name == port.name, self.serial_ports))
             is_binary, line = await serial_port.read_bytes()
 
-            if line:
-                message_type_name = 'Binary' if is_binary else 'Text'
-                logging.info(
-                    f"{message_type_name} message from {port_name}"
-                    f" -> {line if is_binary else line[:-1].decode('ISO-8859-1')}")
-                if is_binary:
-                    # TODO: Handle the 'Full' exception?
-                    self.message_queue.put_nowait(line)
-            else:
+            if len(line) == 0:
                 await asyncio.sleep(3)
+                continue
+
+            if is_binary:
+                self.handle_binary(port, line)
+            else:
+                self.handle_text(port, line)
+
+    def handle_text(self, port: SerialPort, line: bytearray) -> None:
+        logging.info(f"Text message from {port.name} -> {line[:-1].decode('ISO-8859-1')}")
+
+    def handle_binary(self, port: SerialPort, line: bytearray) -> None:
+        logging.info(f"Binary message from {port.name} -> {line}")
+        is_waiting_for_id = bool(next(filter(lambda x: x.name == port.name, self.ports_waiting), None))
+        if port.node_id is None and not is_waiting_for_id:
+            self.ports_waiting.append(port)
+
+        self.message_queue.put_nowait(line)
