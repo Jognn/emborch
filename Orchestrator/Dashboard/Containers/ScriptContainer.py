@@ -21,4 +21,5 @@ class ScriptContainer:
         button.pack()
 
     def send_script(self):
-        self.root.script_dispatcher.send_script(self.text.get("1.0", 'end-1c'))
+        SCRIPT_REQUIRED_MEMORY_MOCK = 12000
+        self.root.server_relay.process_binary_script(self.text.get("1.0", 'end-1c'), 12000)
