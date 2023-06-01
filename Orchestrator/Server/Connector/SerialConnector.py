@@ -28,8 +28,12 @@ class SerialConnector(Connector):
             logging.error(f"[Connector] Could not find a port with node_id={node_id}. Node not registered yet?")
 
     def node_registered(self, node_id: int) -> None:
-        registered_port = self.ports_waiting.pop(0)
-        registered_port.node_id = node_id
+        # TODO: FIX ALREADY REGISTERED PORT
+        try:
+            registered_port = self.ports_waiting.pop(0)
+            registered_port.node_id = node_id
+        except IndexError:
+            logging.error("[Connector] Port is already registered")
 
     async def _read_binary_message(self, port: SerialPort) -> None:
         while True:

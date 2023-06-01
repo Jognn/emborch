@@ -27,6 +27,7 @@ class EventBus:
             node: Optional[Node] = self.node_registry.register_new_node(event.available_memory,
                                                                         event.supported_features)
             self.message_service.send_register_result(node)
+            self.server_relay.new_node_registered(node)
         elif event_type == EventType.SEND_SCRIPT:
             nodes = self.node_registry.get_nodes()
             chosen_node = self.nodes_scheduler.choose_node(nodes, event.required_memory)

@@ -3,6 +3,7 @@
 import asyncio
 import logging
 from asyncio import Queue
+from tkinter.ttk import Separator
 from typing import Any, Coroutine
 
 from Orchestrator.Dashboard.AsyncTk import AsyncTk
@@ -25,19 +26,26 @@ class App(AsyncTk):
         super().__init__()
 
         # Server stuff
+        self.server_relay = server_relay
+        self.server_relay.set_dashboard(self)
         connector.initialize(self.runners)
         self.runners.append(poll_messages_coroutine)
 
         # Dashboard stuff
+        self.node_container = NodeContainer(self)
+        separator = Separator(self, orient='horizontal')
+        separator.pack(fill='x', pady=20)
+        self.script_container = ScriptContainer(self)
+
         self.create_ui()
-        self.server_relay = server_relay
 
         logging.info("emborch has started :)")
 
     def create_ui(self):
         self.title("Emborch dashboard")
-        node_container = NodeContainer(self)
-        script_container = ScriptContainer(self)
+
+    def add_new_node(self, node_id: int, available_memory: int, supported_features: int) -> None:
+        self.node_container.add_node_entry(node_id, available_memory, supported_features)
 
 
 async def main(application: App):
