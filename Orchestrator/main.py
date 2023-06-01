@@ -32,20 +32,22 @@ class App(AsyncTk):
         self.runners.append(poll_messages_coroutine)
 
         # Dashboard stuff
+        self.title("Emborch dashboard")
         self.node_container = NodeContainer(self)
         separator = Separator(self, orient='horizontal')
         separator.pack(fill='x', pady=20)
         self.script_container = ScriptContainer(self)
 
-        self.create_ui()
-
         logging.info("emborch has started :)")
-
-    def create_ui(self):
-        self.title("Emborch dashboard")
 
     def add_new_node(self, node_id: int, available_memory: int, supported_features: int) -> None:
         self.node_container.add_node_entry(node_id, available_memory, supported_features)
+
+    def node_assigned_script(self, node_id, available_memory: int, script_text: str):
+        self.node_container.edit_node_entry(node_id=node_id,
+                                            status="Running script",
+                                            available_memory=available_memory,
+                                            script_txt=script_text)
 
 
 async def main(application: App):

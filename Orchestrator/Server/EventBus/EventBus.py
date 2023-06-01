@@ -34,5 +34,6 @@ class EventBus:
             if chosen_node is not None:
                 self.node_registry.working_node(chosen_node.node_id, event.required_memory, event.script_text)
                 self.message_service.send_script_to_node(chosen_node, event.script_binary)
+                self.server_relay.node_assigned_script(chosen_node)
         else:
             logging.error(f"[EventBus] Unknown event type: {event_type}")

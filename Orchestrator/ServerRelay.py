@@ -32,6 +32,11 @@ class ServerRelay(EventComponent):
     def new_node_registered(self, node: Node) -> None:
         self.dashboard.add_new_node(node.node_id, node.available_memory_bytes, node.supported_features)
 
+    def node_assigned_script(self, node: Node):
+        self.dashboard.node_assigned_script(node_id=node.node_id,
+                                            available_memory=node.available_memory_bytes,
+                                            script_text=node.running_script)
+
     def _compress_text(self, text: str) -> str:
         one_line_text = text.replace('\n', ' ').replace('\r', '')
         trimmed_one_line_text = filter(lambda x: x != '', one_line_text.split(' '))
