@@ -1,4 +1,5 @@
 import logging
+from random import randint
 from typing import Optional, List
 
 from Orchestrator.Server.NodeRegistry.Node import Node
@@ -9,6 +10,16 @@ class NodeRegistry:
         self.available_ids = [i for i in range(14, 0, -1)]
         self.nodes = []
 
+        self.adjectives = []
+        self.names = []
+        with open('adjectives.txt', 'r') as file:
+            text: str = file.read()
+            self.adjectives = text.lower().split("\n")
+
+        with open('names.txt', 'r') as file:
+            text: str = file.read()
+            self.names = text.lower().split("\n")
+
     def register_new_node(self, available_memory_kb: int, supported_features: int) -> Optional[Node]:
         # TODO: Check if the node is already registered!
         if len(self.available_ids) == 0:
@@ -16,6 +27,7 @@ class NodeRegistry:
 
         new_node_id = self.available_ids.pop()
         node = Node(node_id=new_node_id,
+                    name=self._generate_random_name(),
                     available_memory_bytes=available_memory_kb * 1000,
                     supported_features=supported_features)
         self.nodes.append(node)
@@ -30,3 +42,12 @@ class NodeRegistry:
 
     def get_nodes(self) -> List[Node]:
         return self.nodes
+
+    def _generate_random_name(self) -> str:
+        adjectives_max_index = len(self.adjectives) - 1
+        adjective = self.adjectives.pop(randint(0, adjectives_max_index))
+
+        names_max_index = len(self.names) - 1
+        name = self.names.pop(randint(0, names_max_index))
+
+        return f"{adjective}_{name}"

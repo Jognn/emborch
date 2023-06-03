@@ -30,7 +30,7 @@ class ServerRelay(EventComponent):
         self.event_bus.notify(send_script_event)
 
     def new_node_registered(self, node: Node) -> None:
-        self.dashboard.add_new_node(node.node_id, node.available_memory_bytes, node.supported_features)
+        self.dashboard.add_new_node(node.node_id, node.name, node.available_memory_bytes, node.supported_features)
 
     def node_assigned_script(self, node: Node):
         self.dashboard.node_assigned_script(node_id=node.node_id,

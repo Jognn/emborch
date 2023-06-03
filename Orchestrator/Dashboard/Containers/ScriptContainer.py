@@ -20,7 +20,7 @@ class ScriptContainer:
         required_memory_frame = Frame(root, width=500)
         required_memory_frame.pack()
 
-        required_memory_label = Label(required_memory_frame, text="Required memory (B): ")
+        required_memory_label = Label(required_memory_frame, text="Required memory (bytes): ")
         required_memory_label.pack(side=LEFT)
 
         self.required_memory_entry = Entry(required_memory_frame, justify=CENTER, width=8)

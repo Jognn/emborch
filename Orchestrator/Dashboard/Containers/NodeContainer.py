@@ -1,35 +1,34 @@
-from tkinter import Frame, Label
-from tkinter.constants import LEFT, RIGHT, TOP, BOTTOM
 from typing import Optional
 
+import ttkbootstrap as ttk
 
-class NodeFrame(Frame):
-    STATUS_PREFIX: str = "Status:"
 
-    def __init__(self, node_id: int, available_memory: int, master=None, **kwargs):
-        super().__init__(master, cnf={}, **kwargs)
-        self.node_id = node_id
+class NodeDataEntry:
 
-        self.node_params_label = Label(self,
-                                       text=f"Node id: {node_id}\t"
-                                            f"Available memory: {self._get_available_memory_string(available_memory)} KB\t")
-        self.node_params_label.pack(side=LEFT)
+    def __init__(self, treeview: ttk.Treeview, status: str, node_id: int, name: str, max_memory: int):
+        self._treeview_ref: ttk.Treeview = treeview
+        self.node_id: int = node_id
 
-        self.node_status_label = Label(self, text=f"\t{NodeFrame.STATUS_PREFIX} Free")
-        self.node_status_label.pack(side=RIGHT)
+        self.status: str = status
+        self.name: str = name
+        self.max_memory: int = max_memory
+        self.available_memory: int = max_memory
+        self.script_txt: Optional[str] = None
 
-        self.node_running_script = Label(self, text='')
-        self.node_running_script.pack(side=BOTTOM)
+        memory_text = f"{self._format_memory(self.available_memory)} / {self._format_memory(self.max_memory)} KB"
+        self._treeview_ref.insert(parent='',
+                                  index='end',
+                                  iid=str(self.node_id),
+                                  values=(self.status, self.node_id, self.name, memory_text))
 
-    def update_node_params(self, status: str, available_memory: int, script_txt: Optional[str]):
-        self.node_params_label.config(text=f"Node id: {self.node_id}\t"
-                                           f"Available memory: {self._get_available_memory_string(available_memory)} KB\t")
-        self.node_status_label.config(text=NodeFrame.STATUS_PREFIX + status)
+    def update_node_entry(self) -> None:
+        self._treeview_ref.set(str(self.node_id), "status", self.status)
+        self._treeview_ref.set(str(self.node_id), "memory", self._get_memory_string())
 
-        if script_txt is not None:
-            self.node_running_script.config(text=script_txt)
+    def _get_memory_string(self) -> str:
+        return f"{self._format_memory(self.available_memory)} / {self._format_memory(self.max_memory)} KB"
 
-    def _get_available_memory_string(self, memory: int) -> str:
+    def _format_memory(self, memory: int) -> str:
         available_memory_kb = memory / 1000
         if memory % 1000 == 0:
             return '{:.0f}'.format(available_memory_kb)
@@ -40,23 +39,46 @@ class NodeFrame(Frame):
 class NodeContainer:
     def __init__(self, root):
         self.root = root
+        self.node_data_entries: dict[int, NodeDataEntry] = dict()
 
-        self.node_frames: dict[int, NodeFrame] = dict()
-        self.node_container_frame = Frame(self.root)
+        self.node_container_frame = ttk.Frame(self.root)
         self.node_container_frame.pack()
 
-    def add_node_entry(self, node_id: int, available_memory: int, supported_features: int) -> None:
+        treeview_style = ttk.Style()
+        treeview_style.configure('Treeview', rowheight=40)
+        treeview_style.configure('Treeview.Heading', background="lightblue")
+
+        self.treeview = ttk.Treeview(self.node_container_frame,
+                                     columns=("status", "id", "name", "memory"),
+                                     show='headings',
+                                     height=5)
+
+        self.treeview.column("status", anchor=ttk.CENTER, width=80, minwidth=0)
+        self.treeview.column("id", anchor=ttk.CENTER, width=60, minwidth=0)
+        self.treeview.column("name", anchor=ttk.CENTER, width=160, minwidth=0)
+        self.treeview.column("memory", anchor=ttk.CENTER, width=140, minwidth=0)
+
+        self.treeview.heading("status", text="Status")
+        self.treeview.heading("id", text="Id")
+        self.treeview.heading("name", text="Name")
+        self.treeview.heading("memory", text="Available memory")
+
+        self.treeview.pack(pady=10)
+
+    def add_node_entry(self, node_id: int, name: str, available_memory: int, supported_features: int) -> None:
         # TODO: Supported features not showing
-        new_node_frame = NodeFrame(master=self.node_container_frame,
-                                   node_id=node_id,
-                                   available_memory=available_memory,
-                                   height=200,
-                                   borderwidth=2,
-                                   relief="groove")
-        new_node_frame.pack(side=TOP)
-        self.node_frames[node_id] = new_node_frame
+        new_node_data_entry = NodeDataEntry(self.treeview,
+                                            status="Free",
+                                            node_id=node_id,
+                                            name=name,
+                                            max_memory=available_memory)
+        self.node_data_entries[node_id] = new_node_data_entry
 
     def edit_node_entry(self, node_id: int, status: str, available_memory: int, script_txt: Optional[str]):
         # TODO: Supported features not showing
-        node_frame = self.node_frames.get(node_id)
-        node_frame.update_node_params(status, available_memory, script_txt)
+        node_data_entry = self.node_data_entries[node_id]
+        node_data_entry.status = status
+        node_data_entry.available_memory = available_memory
+        node_data_entry.script_txt = script_txt
+
+        node_data_entry.update_node_entry()
