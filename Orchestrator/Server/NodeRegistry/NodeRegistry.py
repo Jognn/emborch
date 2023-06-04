@@ -12,11 +12,11 @@ class NodeRegistry:
 
         self.adjectives = []
         self.names = []
-        with open('adjectives.txt', 'r') as file:
+        with open('Resources/adjectives.txt', 'r') as file:
             text: str = file.read()
             self.adjectives = text.lower().split("\n")
 
-        with open('names.txt', 'r') as file:
+        with open('Resources/names.txt', 'r') as file:
             text: str = file.read()
             self.names = text.lower().split("\n")
 
