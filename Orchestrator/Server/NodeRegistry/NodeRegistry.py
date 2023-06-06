@@ -1,6 +1,8 @@
+import asyncio
 import logging
+from copy import deepcopy
 from random import randint
-from typing import Optional, List
+from typing import Optional, List, Coroutine
 
 from Orchestrator.Server.NodeRegistry.Node import Node
 
@@ -20,6 +22,9 @@ class NodeRegistry:
             text: str = file.read()
             self.names = text.lower().split("\n")
 
+    def initialize(self, running_tasks: list[Coroutine]):
+        running_tasks.append(self._monitor_nodes())
+
     def register_new_node(self, available_memory_kb: int, supported_features: int) -> Optional[Node]:
         # TODO: Check if the node is already registered!
         if len(self.available_ids) == 0:
@@ -34,7 +39,7 @@ class NodeRegistry:
         logging.info(f"[NodeRegistry] New node has been registered: {node}")
         return node
 
-    def working_node(self, node_id: int, used_memory: int, script_text: str) -> None:
+    def set_working_node(self, node_id: int, used_memory: int, script_text: str) -> None:
         node = next(filter(lambda x: x.node_id == node_id, self.nodes), None)
         if node is not None:
             node.available_memory_bytes -= used_memory
@@ -42,6 +47,21 @@ class NodeRegistry:
 
     def get_nodes(self) -> List[Node]:
         return self.nodes
+
+    async def _monitor_nodes(self):
+        while True:
+            current_nodes = deepcopy(self.nodes)
+
+            if len(current_nodes) == 0:
+                print("NO NODES")
+                await asyncio.sleep(10)
+
+            for node in current_nodes:
+                # TODO: If they are separate tasks for sending ALIVE_CHECK and interpreting it,
+                # they could be a synchronisation issue, in which the interpreting tasks marks node invalid,
+                # but the "sending" one does not know it yet!
+                print(f"MONITORING NODE {node.node_id}")
+                await asyncio.sleep(10)
 
     def _generate_random_name(self) -> str:
         adjectives_max_index = len(self.adjectives) - 1

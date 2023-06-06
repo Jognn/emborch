@@ -32,7 +32,7 @@ class EventBus:
             nodes = self.node_registry.get_nodes()
             chosen_node = self.nodes_scheduler.choose_node(nodes, event.required_memory)
             if chosen_node is not None:
-                self.node_registry.working_node(chosen_node.node_id, event.required_memory, event.script_text)
+                self.node_registry.set_working_node(chosen_node.node_id, event.required_memory, event.script_text)
                 self.message_service.send_script_to_node(chosen_node, event.script_binary)
                 self.server_relay.node_assigned_script(chosen_node)
         else:

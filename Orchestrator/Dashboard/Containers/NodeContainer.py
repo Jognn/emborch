@@ -53,10 +53,10 @@ class NodeContainer:
                                      show='headings',
                                      height=5)
 
-        self.treeview.column("status", anchor=ttk.CENTER, width=80, minwidth=0)
-        self.treeview.column("id", anchor=ttk.CENTER, width=60, minwidth=0)
+        self.treeview.column("status", anchor=ttk.CENTER, width=110, minwidth=0)
+        self.treeview.column("id", anchor=ttk.CENTER, width=80, minwidth=0)
         self.treeview.column("name", anchor=ttk.CENTER, width=160, minwidth=0)
-        self.treeview.column("memory", anchor=ttk.CENTER, width=140, minwidth=0)
+        self.treeview.column("memory", anchor=ttk.CENTER, width=160, minwidth=0)
 
         self.treeview.heading("status", text="Status")
         self.treeview.heading("id", text="Id")

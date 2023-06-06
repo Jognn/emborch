@@ -16,9 +16,9 @@ class SerialConnector(Connector):
         self.serial_ports = [SerialPort(name) for name in serial_port_names]
         self.ports_waiting: List[SerialPort] = []
 
-    def initialize(self, runners: List[Coroutine]) -> None:
+    def initialize(self, running_tasks: List[Coroutine]) -> None:
         for port in self.serial_ports:
-            runners.append(self._read_binary_message(port))
+            running_tasks.append(self._read_binary_message(port))
 
     def send_binary_message(self, node_id: int, binary_message: bytearray) -> None:
         port = next(filter(lambda x: x.node_id == node_id, self.serial_ports), None)

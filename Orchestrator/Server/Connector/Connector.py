@@ -13,7 +13,7 @@ class Connector(ABC):
         self.port_node_map: Dict[int, str] = dict()
 
     @abstractmethod
-    def initialize(self, runners: List[Coroutine]) -> None:
+    def initialize(self, running_tasks: List[Coroutine]) -> None:
         pass
 
     @abstractmethod

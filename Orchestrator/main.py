@@ -3,14 +3,13 @@
 import asyncio
 import logging
 from asyncio import Queue
-from typing import Any, Coroutine
+from typing import Coroutine
 
 import ttkbootstrap as ttk
 
 from Orchestrator.Dashboard.AsyncTk import AsyncTk
 from Orchestrator.Dashboard.Containers.NodeContainer import NodeContainer
 from Orchestrator.Dashboard.Containers.ScriptContainer import ScriptContainer
-from Orchestrator.Server.Connector.Connector import Connector
 from Orchestrator.Server.Connector.SerialConnector import SerialConnector
 from Orchestrator.Server.EventBus.EventBus import EventBus
 from Orchestrator.Server.MessageService.MessageService import MessageService
@@ -21,16 +20,15 @@ from Orchestrator.ServerRelay import ServerRelay
 
 class App(AsyncTk):
     def __init__(self,
-                 connector: Connector,
-                 server_relay: ServerRelay,
-                 poll_messages_coroutine: Coroutine[Any, Any, None]):
-        super().__init__()
+                 running_tasks: list[Coroutine],
+                 poll_messages_coroutine: Coroutine,
+                 server_relay: ServerRelay):
+        super().__init__(running_tasks)
+        self.running_tasks.append(poll_messages_coroutine)
 
         # Server stuff
         self.server_relay = server_relay
         self.server_relay.set_dashboard(self)
-        connector.initialize(self.runners)
-        self.runners.append(poll_messages_coroutine)
 
         # Dashboard stuff
         self.title("Emborch dashboard")
@@ -69,15 +67,20 @@ if __name__ == '__main__':
         format='%(asctime)s %(levelname)-4s:  %(message)s',
         level=logging.NOTSET,
         datefmt='%Y-%m-%d %H:%M:%S')
+    # Main running tasks list
+    running_tasks = list()
+
     # Connector
     message_queue = Queue()
     connector = SerialConnector(message_queue=message_queue)
+    connector.initialize(running_tasks=running_tasks)
 
     # Message Service
     message_service = MessageService(connector=connector, message_queue=message_queue)
 
     # Node Registry
     node_registry = NodeRegistry()
+    node_registry.initialize(running_tasks=running_tasks)
 
     # Node Scheduler
     nodes_scheduler = NodesScheduler()
@@ -95,7 +98,7 @@ if __name__ == '__main__':
     server_relay.set_event_bus(event_bus)
 
     # Application
-    app = App(connector=connector,
+    app = App(running_tasks=running_tasks,
               server_relay=server_relay,
               poll_messages_coroutine=message_service.poll_messages())
     asyncio.run(main(app))
