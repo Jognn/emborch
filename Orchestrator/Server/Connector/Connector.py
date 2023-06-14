@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 from asyncio import Queue
-from typing import Dict, TypeVar, Coroutine, List
+from typing import Dict, TypeVar
 
 from Orchestrator.Server.MessageService.Message import Message
 
@@ -11,10 +11,6 @@ class Connector(ABC):
     def __init__(self, message_queue: Queue) -> None:
         self.message_queue = message_queue
         self.port_node_map: Dict[int, str] = dict()
-
-    @abstractmethod
-    def initialize(self, running_tasks: List[Coroutine]) -> None:
-        pass
 
     @abstractmethod
     def node_registered(self, node_id: int) -> None:

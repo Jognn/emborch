@@ -2,13 +2,15 @@ import asyncio
 import logging
 from copy import deepcopy
 from random import randint
-from typing import Optional, List, Coroutine
+from typing import Optional, List
 
+from Orchestrator.AsyncTaskManager import AsyncTaskManager
 from Orchestrator.Server.NodeRegistry.Node import Node
 
 
 class NodeRegistry:
-    def __init__(self):
+    def __init__(self, async_task_manager: AsyncTaskManager):
+        self.async_task_manager = async_task_manager
         self.available_ids = [i for i in range(14, 0, -1)]
         self.nodes = []
 
@@ -22,8 +24,7 @@ class NodeRegistry:
             text: str = file.read()
             self.names = text.lower().split("\n")
 
-    def initialize(self, running_tasks: list[Coroutine]):
-        running_tasks.append(self._monitor_nodes())
+        self.async_task_manager.add_task(self._monitor_nodes())
 
     def register_new_node(self, available_memory_kb: int, supported_features: int) -> Optional[Node]:
         # TODO: Check if the node is already registered!

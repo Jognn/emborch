@@ -1,26 +1,24 @@
 import asyncio
+import logging
 from tkinter import Tk
-from typing import Coroutine
+
+from Orchestrator.AsyncTaskManager import AsyncTaskManager
 
 
 class AsyncTk(Tk):
     """ Basic Tk with an asyncio-compatible event loop """
 
-    def __init__(self, running_tasks: list[Coroutine]):
+    def __init__(self, async_task_manager: AsyncTaskManager):
         super().__init__()
-        self.running = False
-        self.running_tasks = running_tasks
-        self.running_tasks.append(self.tk_loop())
+        self.async_task_manager = async_task_manager
+        self.async_task_manager.add_task(self.run())
 
-    async def tk_loop(self) -> None:
-        """ asyncio 'compatible' tk event loop? """
-        while self.running:
-            self.update()
-            await asyncio.sleep(0)
-
-    def stop(self) -> None:
-        self.running = False
+    def destroy(self) -> None:
+        super().destroy()
+        self.async_task_manager.stop_all_tasks()
+        logging.info("Emborch has stopped working!")
 
     async def run(self) -> None:
-        self.running = True
-        await asyncio.gather(*self.running_tasks)
+        while True:
+            self.update()
+            await asyncio.sleep(0)

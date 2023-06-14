@@ -3,6 +3,7 @@ import logging
 from asyncio import Queue
 from typing import TypeVar, Optional
 
+from Orchestrator.AsyncTaskManager import AsyncTaskManager
 from Orchestrator.Server.Connector.Connector import Connector
 from Orchestrator.Server.EventBus.Event import Event, EventType
 from Orchestrator.Server.EventBus.EventComponent import EventComponent
@@ -17,10 +18,14 @@ ORCHESTRATOR_ID = 15
 class MessageService(EventComponent):
     MessageType = TypeVar('MessageType', bound=Message)
 
-    def __init__(self, connector: Connector, message_queue: Queue):
+    def __init__(self, async_task_manager: AsyncTaskManager, connector: Connector, message_queue: Queue):
         super().__init__()
+
+        self.async_task_manager = async_task_manager
         self.connector = connector
         self.message_queue = message_queue
+
+        self.async_task_manager.add_task(self.poll_messages())
 
     async def poll_messages(self) -> None:
         while True:

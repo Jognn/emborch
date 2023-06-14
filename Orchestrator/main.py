@@ -3,10 +3,10 @@
 import asyncio
 import logging
 from asyncio import Queue
-from typing import Coroutine
 
 import ttkbootstrap as ttk
 
+from Orchestrator.AsyncTaskManager import AsyncTaskManager
 from Orchestrator.Dashboard.AsyncTk import AsyncTk
 from Orchestrator.Dashboard.Containers.NodeContainer import NodeContainer
 from Orchestrator.Dashboard.Containers.ScriptContainer import ScriptContainer
@@ -19,12 +19,8 @@ from Orchestrator.ServerRelay import ServerRelay
 
 
 class App(AsyncTk):
-    def __init__(self,
-                 running_tasks: list[Coroutine],
-                 poll_messages_coroutine: Coroutine,
-                 server_relay: ServerRelay):
-        super().__init__(running_tasks)
-        self.running_tasks.append(poll_messages_coroutine)
+    def __init__(self, async_task_manager: AsyncTaskManager, server_relay: ServerRelay):
+        super().__init__(async_task_manager=async_task_manager)
 
         # Server stuff
         self.server_relay = server_relay
@@ -58,8 +54,41 @@ class App(AsyncTk):
                                             script_txt=script_text)
 
 
-async def main(application: App):
-    await application.run()
+async def main() -> None:
+    async with asyncio.TaskGroup() as tg:
+        # Asynchronous Task Manager
+        async_task_manager = AsyncTaskManager(tg)
+
+        # Connector
+        message_queue = Queue()
+        connector = SerialConnector(async_task_manager=async_task_manager,
+                                    message_queue=message_queue)
+
+        # Message Service
+        message_service = MessageService(async_task_manager=async_task_manager,
+                                         connector=connector,
+                                         message_queue=message_queue)
+
+        # Node Registry
+        node_registry = NodeRegistry(async_task_manager=async_task_manager)
+
+        # Node Scheduler
+        nodes_scheduler = NodesScheduler()
+
+        # Server Relay
+        server_relay = ServerRelay()
+
+        # Event Bus
+        event_bus = EventBus(message_service=message_service,
+                             node_registry=node_registry,
+                             nodes_scheduler=nodes_scheduler,
+                             server_relay=server_relay)
+        message_service.set_event_bus(event_bus)
+        nodes_scheduler.set_event_bus(event_bus)
+        server_relay.set_event_bus(event_bus)
+
+        # Application
+        app = App(async_task_manager=async_task_manager, server_relay=server_relay)
 
 
 if __name__ == '__main__':
@@ -67,38 +96,4 @@ if __name__ == '__main__':
         format='%(asctime)s %(levelname)-4s:  %(message)s',
         level=logging.NOTSET,
         datefmt='%Y-%m-%d %H:%M:%S')
-    # Main running tasks list
-    running_tasks = list()
-
-    # Connector
-    message_queue = Queue()
-    connector = SerialConnector(message_queue=message_queue)
-    connector.initialize(running_tasks=running_tasks)
-
-    # Message Service
-    message_service = MessageService(connector=connector, message_queue=message_queue)
-
-    # Node Registry
-    node_registry = NodeRegistry()
-    node_registry.initialize(running_tasks=running_tasks)
-
-    # Node Scheduler
-    nodes_scheduler = NodesScheduler()
-
-    # Server Relay
-    server_relay = ServerRelay()
-
-    # Event Bus
-    event_bus = EventBus(message_service=message_service,
-                         node_registry=node_registry,
-                         nodes_scheduler=nodes_scheduler,
-                         server_relay=server_relay)
-    message_service.set_event_bus(event_bus)
-    nodes_scheduler.set_event_bus(event_bus)
-    server_relay.set_event_bus(event_bus)
-
-    # Application
-    app = App(running_tasks=running_tasks,
-              server_relay=server_relay,
-              poll_messages_coroutine=message_service.poll_messages())
-    asyncio.run(main(app))
+    asyncio.run(main())
