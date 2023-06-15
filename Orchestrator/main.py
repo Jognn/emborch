@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import sys
 from asyncio import Queue
 
 from Orchestrator.AsyncTaskManager import AsyncTaskManager
@@ -52,6 +53,11 @@ async def main() -> None:
 
 
 if __name__ == '__main__':
+    python_number = sys.version_info[0]
+    python_version = sys.version_info[1]
+    if python_number < 3 or python_version < 11:
+        raise Exception("Requires Python 3.11 or higher!")
+
     logging.basicConfig(
         format='%(asctime)s %(levelname)-4s:  %(message)s',
         level=logging.NOTSET,
