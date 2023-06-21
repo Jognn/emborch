@@ -20,13 +20,16 @@ class EventBus:
         self.nodes_scheduler = nodes_scheduler
         self.server_relay = server_relay
 
-    def notify(self, event: Event):
+    def notify(self, event: Event) -> None:
         event_type = event.event_type
 
         if event_type == EventType.NODE_REGISTER:
             node: Optional[Node] = self.node_registry.register_new_node(event.available_memory,
                                                                         event.supported_features)
-            self.message_service.send_register_result(node)
+            if node is None:
+                return
+
+            self.message_service.send_register_result(node.node_id)
             self.server_relay.new_node_registered(node)
         elif event_type == EventType.SEND_SCRIPT:
             nodes = self.node_registry.get_nodes()
@@ -35,5 +38,9 @@ class EventBus:
                 self.node_registry.set_working_node(chosen_node.node_id, event.required_memory, event.script_text)
                 self.message_service.send_script_to_node(chosen_node, event.script_binary)
                 self.server_relay.node_assigned_script(chosen_node)
+        elif event_type == EventType.MONITOR_NODE:
+            self.message_service.send_monitor_node_request(node_id=event.node_id)
+        elif event_type == EventType.MONITOR_NODE_RESULT:
+            self.node_registry.monitor_node_response(node_id=event.node_id)
         else:
             logging.error(f"[EventBus] Unknown event type: {event_type}")

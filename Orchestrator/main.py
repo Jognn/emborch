@@ -45,6 +45,7 @@ async def main() -> None:
                              nodes_scheduler=nodes_scheduler,
                              server_relay=server_relay)
         message_service.set_event_bus(event_bus)
+        node_registry.set_event_bus(event_bus)
         nodes_scheduler.set_event_bus(event_bus)
         server_relay.set_event_bus(event_bus)
 

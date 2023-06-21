@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from asyncio import Queue
 from typing import TypeVar, Optional
@@ -7,7 +6,8 @@ from Orchestrator.AsyncTaskManager import AsyncTaskManager
 from Orchestrator.Server.Connector.Connector import Connector
 from Orchestrator.Server.EventBus.Event import Event, EventType
 from Orchestrator.Server.EventBus.EventComponent import EventComponent
-from Orchestrator.Server.MessageService.Message import Message, SendScriptMessage, MessageType, RegisterMessage
+from Orchestrator.Server.MessageService.Message import Message, SendScriptMessage, MessageType, RegisterMessage, \
+    MonitorNodeMessage
 from Orchestrator.Server.NodeRegistry.Node import Node
 
 MESSAGE_TYPE_MASK = 240
@@ -25,32 +25,33 @@ class MessageService(EventComponent):
         self.connector = connector
         self.message_queue = message_queue
 
-        self.async_task_manager.add_task(self.poll_messages())
-
-    async def poll_messages(self) -> None:
-        while True:
-            if self.message_queue.empty():
-                await asyncio.sleep(1)
-                continue
-
-            binary_message = await self.message_queue.get()
-            self._handle_message(binary_message)
+        self.async_task_manager.add_task(self._poll_messages())
 
     def send_script_to_node(self, node: Node, binary_script: bytearray) -> None:
         send_script_msg = SendScriptMessage(type=MessageType.SendScript, sender=ORCHESTRATOR_ID, payload=binary_script)
         binary_msg = self._generate_binary_message(send_script_msg)
         self.connector.send_binary_message(node.node_id, binary_msg)
 
-    def send_register_result(self, node: Optional[Node]) -> None:
-        if node is not None:
-            self.connector.node_registered(node.node_id)
+    def send_register_result(self, node_id: Optional[int]) -> None:
+        if node_id is not None:
+            self.connector.node_registered(node_id)
 
         register_message = RegisterMessage(type=MessageType.Register,
                                            sender=ORCHESTRATOR_ID,
-                                           assigned_id=node.node_id if node is not None else ORCHESTRATOR_ID)
+                                           assigned_id=node_id if node_id is not None else ORCHESTRATOR_ID)
         binary_message_response = self._generate_binary_message(register_message)
 
         self.connector.send_binary_message(register_message.assigned_id, binary_message_response)
+
+    def send_monitor_node_request(self, node_id: id) -> None:
+        monitor_node_request_message = MonitorNodeMessage(type=MessageType.MonitorNode,
+                                                          sender=ORCHESTRATOR_ID)
+        print(f"SENDING MONITOR NODE REQUEST {monitor_node_request_message}")
+
+    async def _poll_messages(self) -> None:
+        while True:
+            binary_message = await self.message_queue.get()
+            self._handle_message(binary_message)
 
     def _generate_binary_message(self, message: Message) -> bytearray:
         binary_message = bytearray()
@@ -95,11 +96,8 @@ class MessageService(EventComponent):
         elif message_type == MessageType.SendScript:
             logging.error("[MessageService] Interpreting SendScript message is not supported yet!")
             return None
-        elif message_type == MessageType.AliveCheck:
-            logging.error("[MessageService] Interpreting AliveCheck message is not supported yet!")
-            return None
-        elif message_type == MessageType.Report:
-            logging.error("[MessageService] Interpreting Report message is not supported yet!")
+        elif message_type == MessageType.MonitorNodeResponse:
+            logging.error("[MessageService] Interpreting MonitorNodeResponse message is not supported yet!")
             return None
         else:
             logging.error("[MessageService] Interpreting unsupported message type!")

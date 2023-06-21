@@ -7,8 +7,8 @@ ORCHESTRATOR_ID = 15
 class MessageType(Enum):
     Register = 0
     SendScript = 1
-    AliveCheck = 2
-    Report = 3
+    MonitorNode = 2
+    MonitorNodeResponse = 3
 
 
 class Message:
@@ -27,6 +27,11 @@ class SendScriptMessage(Message):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.payload = kwargs['payload']
+
+
+class MonitorNodeMessage(Message):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 M = TypeVar('M', bound=Message)

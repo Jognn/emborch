@@ -1,3 +1,4 @@
+import asyncio
 import dataclasses
 from typing import Optional
 
@@ -10,3 +11,4 @@ class Node:
     supported_features: int
     is_alive: bool = True
     running_script: Optional[str] = None
+    status_queue: asyncio.Queue = asyncio.Queue(maxsize=1)
