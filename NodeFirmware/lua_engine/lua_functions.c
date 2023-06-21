@@ -1,20 +1,30 @@
-//
-// Created by jogn on 13.10.22.
-//
+/*
+ * Copyright (C) 2022 Jognn
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+
+/** Definitions */
 #include "definitons.h"
 
-#if (NATIVE_TASK == 0)
-#include "include/lua_functions.h"
 
+#if (NATIVE_TEST_MODE == 0)
+
+
+#include "lua_functions.h"
+
+/** Modules */
 #include "periph/gpio.h"
 #include "xtimer.h"
-#include "include/benchmark_testSamples.h"
 
 
 int l_initPin(lua_State *L)
 {
     uint32_t const port = luaL_checkinteger(L, 1);
-    uint32_t const pin =  luaL_checkinteger(L, 2);
+    uint32_t const pin = luaL_checkinteger(L, 2);
     bool const isInput = luaL_checkinteger(L, 3);
 
     int const result = gpio_init(GPIO_PIN(port, pin), isInput);
@@ -26,7 +36,7 @@ int l_initPin(lua_State *L)
 int l_togglePin(lua_State *L)
 {
     uint32_t const port = luaL_checkinteger(L, 1);
-    uint32_t const pin =  luaL_checkinteger(L, 2);
+    uint32_t const pin = luaL_checkinteger(L, 2);
 
     LOG_DEBUG("Toggling port: %lu pin: %lu\n", port, pin)
     gpio_toggle(GPIO_PIN(port, pin));
@@ -37,7 +47,7 @@ int l_togglePin(lua_State *L)
 int l_sleep(lua_State *L)
 {
     uint32_t const seconds = luaL_checkinteger(L, 1);
-    LOG_DEBUG("Sleeping for %lus \n", seconds)
+    LOG_DEBUG("Sleeping for %lu \n", seconds)
     xtimer_sleep(seconds);
 
     return 0;
@@ -46,7 +56,7 @@ int l_sleep(lua_State *L)
 int l_sleepMilli(lua_State *L)
 {
     uint32_t const milliseconds = luaL_checkinteger(L, 1);
-    LOG_DEBUG("Sleeping for %lums\n", milliseconds)
+    LOG_DEBUG("Sleeping for %lu\n", milliseconds)
     xtimer_msleep(milliseconds);
 
     return 0;

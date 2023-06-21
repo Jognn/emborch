@@ -68,12 +68,12 @@ class NodeRegistry(EventComponent):
                 monitor_node_request = Event(EventType.MONITOR_NODE)
                 monitor_node_request.node_id = node.node_id
                 self.event_bus.notify(monitor_node_request)
-                
+
                 status = await asyncio.wait_for(node.status_queue.get(), NodeRegistry.STATUS_REQUEST_TIMEOUT_S)
                 logging.info(f"[NodeRegistry] Node {node.node_id} responded with MonitorNode status {status}")
             except TimeoutError:
                 logging.error(f"[NodeRegistry] Node {node.node_id} did not respond to the MonitorNode request.")
-                self._unregister_node(node)
+                # self._unregister_node(node)
 
     def _unregister_node(self, node):
         node.is_alive = False

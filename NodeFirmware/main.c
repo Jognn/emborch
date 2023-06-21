@@ -1,26 +1,31 @@
-//
-// Created by jogn on 13.10.22
-//
+/*
+ * Copyright (C) 2022 Jognn
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
 
-/* Definitions */
+
+/** Definitions */
 #include "definitons.h"
 
-/* BLOB */
-#include "bin/nucleo-l476rg/application_IoTPlatform/blobs/blob/main.lua.h"
-
-/* Other */
-#include "include/msg_processor.h"
-#include "include/lua_engine.h"
-#include "thread.h"
+/** System */
 #include <errno.h>
 #include <xtimer.h>
 
-/* Lua engine stack */
+/** Modules */
+#include "lua_engine.h"
+#include "thread.h"
+#include "msg_processor.h"
+
+
+/** Lua engine stack */
 static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
-#if (NATIVE_TASK == 0)
+#if (NATIVE_TEST_MODE == 0)
 
-/* CODE */
+/** CODE */
 void *luaEngine(void *arg)
 {
     (void) arg;
@@ -33,9 +38,7 @@ void *luaEngine(void *arg)
     return NULL;
 }
 
-#endif
-
-#if (NATIVE_TASK == 1)
+#else
 void* NativeTask(void *arg)
 {
     (void) arg;
@@ -81,7 +84,7 @@ void registerNode(void *arg)
 int main(void)
 {
     msgp_init();
-#if (NATIVE_TASK == 0)
+#if (NATIVE_TEST_MODE == 0)
     thread_create(
             luaEngineTaskStack,
             sizeof(luaEngineTaskStack),
@@ -89,8 +92,7 @@ int main(void)
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
             luaEngine,
             NULL,
-            "LUA_TASK"
-    );
+            "LUA_TASK");
     thread_create(
             stack,
             sizeof(stack),
@@ -98,8 +100,7 @@ int main(void)
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
             msgProcessor,
             NULL,
-            "UART_CHECK"
-    );
+            "UART_CHECK");
 
     // Register 5 seconds after startup
     xtimer_sleep(5);

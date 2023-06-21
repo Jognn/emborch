@@ -1,17 +1,26 @@
-//
-// Created by jogn on 31.10.22.
-//
+/*
+ * Copyright (C) 2022 Jognn
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
 
+
+/** Definitions */
 #include "definitons.h"
 
-#if (NATIVE_TASK == 1)
 
-#include "include/native_task.h"
+#if (NATIVE_TEST_MODE == 1)
+/** Tests */
+#include "tests/native_task.h"
+#include "tests/benchmark_testSamples.h"
 
-#include "include/xtimer.h"
-#include "include/gpio.h"
-#include "include/benchmark_testSamples.h"
+/** Modules */
+#include "xtimer.h"
+#include "gpio.h"
 #include "stdlib.h"
+
 
 #define RAND_ARRAY \
 { \
@@ -99,7 +108,6 @@ int native_getTemperature()
 {
     return rand()%10;
 }
-
 #endif // NATIVE_TASK == 0
 
 

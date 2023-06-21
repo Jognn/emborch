@@ -1,8 +1,12 @@
-//
-// Created by jogn on 20.11.22.
-//
+/*
+ * Copyright (C) 2022 Jognn
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+#include "test/benchmark_test_samples.h"
 
-#include "include/benchmark_testSamples.h"
 
 #ifdef IOTPLATFORM_TESTSAMPLES_H
 

@@ -1,17 +1,27 @@
-//
-// Created by jogn on 06.12.22.
-//
+/*
+ * Copyright (C) 2022 Jognn
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
 
-#include "include/msg_processor.h"
 
-#include "stdio.h"
+#include "msg_processor.h"
+
+/** System */
+#include <stdio.h>
+#include <string.h>
+
+/** Modules */
 #include "periph/uart.h"
 #include "isrpipe.h"
 #include "cond.h"
-#include "string.h"
+
 
 #define ETB_SIGN 23
 #define LUA_SCRIPT_STANDARD_HEAP_REQUIRED 14
+
 
 static isrpipe_t uartPipe;
 static uint8_t uartPipeBuffer[BUFFER_SIZE];
@@ -41,11 +51,10 @@ static void uart_cb(void *arg, uint8_t data)
 {
     (void) arg;
 
-    if(data == ETB_SIGN)
+    if (data == ETB_SIGN)
     {
         cond_signal(&messageRecieved);
-    }
-    else
+    } else
     {
         isrpipe_write_one(&uartPipe, data);
     }

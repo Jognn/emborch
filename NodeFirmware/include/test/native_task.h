@@ -1,6 +1,10 @@
-//
-// Created by jogn on 31.10.22.
-//
+/*
+ * Copyright (C) 2022 Jognn
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
 
 #ifndef IOTPLATFORM_NATIVE_TASK_H
 #define IOTPLATFORM_NATIVE_TASK_H

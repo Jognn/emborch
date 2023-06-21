@@ -1,18 +1,38 @@
-//
-// Created by jogn on 15.12.22.
-//
+/*
+ * Copyright (C) 2022 Jognn
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
 
-#include "include/lua_engine.h"
+/**
+ * @ingroup     module_lua_engine
+ * @{
+ *
+ * @file
+ * @brief       Lua Engine implementation
+ *
+ * @author      Jan Zobniow <jan.zobniow@gmail.com>
+ *
+ * @}
+ */
 
-/* Definitions */
+/** Definitions */
 #include "definitons.h"
 
-#include "include/lua_functions.h"
-#include "include/msg_processor.h"
+#include "lua_engine.h"
+
+/** System */
+#include <errno.h>
+
+/** Modules */
+#include "lua_functions.h"
+#include "msg_processor.h"
 #include "lua_run.h"
 #include "isrpipe.h"
 #include "cond.h"
-#include <errno.h>
+
 
 extern cond_t luaScriptReady;
 extern isrpipe_t luaPipe;
@@ -39,7 +59,7 @@ static void initCallbackTable(lua_State *L)
 static int l_runScript(char const *const script, unsigned const scriptSize)
 {
     lua_State *L = lua_riot_newstate(luaMem, sizeof(luaMem), NULL);
-    if(L == NULL)
+    if (L == NULL)
     {
         puts("[ERROR] Cannot create Lua state: not enough memory");
         return ENOMEM;
@@ -48,7 +68,7 @@ static int l_runScript(char const *const script, unsigned const scriptSize)
     initCallbackTable(L);
 
     int const loadBaseLibResult = lua_riot_openlibs(L, LUAR_LOAD_BASE);
-    if(loadBaseLibResult != LUAR_LOAD_O_ALL)
+    if (loadBaseLibResult != LUAR_LOAD_O_ALL)
     {
         printf("[ERROR] Trying to load library - %d\n", loadBaseLibResult);
         return EINTR;
@@ -59,7 +79,7 @@ static int l_runScript(char const *const script, unsigned const scriptSize)
     int const pcallResult = lua_pcall(L, 0, 0, 0);
 
     // When we run into memory problems this condition won't pass, and LUA_ERRMEM is returned
-    if(pcallResult != LUA_OK)
+    if (pcallResult != LUA_OK)
     {
         printf("[ERROR] Lua script running failed - %d\n", pcallResult);
         return EINTR;
