@@ -6,9 +6,9 @@
  * directory for more details.
  */
 
-#ifndef EMBORCH_LUA_ENGINE_H
-#define EMBORCH_LUA_ENGINE_H
 
+/** Run the lua engine */
 void luae_run(void);
 
-#endif // EMBORCH_LUA_ENGINE_H
+/** Immediately shutdowns the current lua interpreter*/
+void luae_shutdown(void);

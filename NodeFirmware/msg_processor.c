@@ -20,21 +20,21 @@
 
 
 #define ETB_SIGN 23
-#define LUA_SCRIPT_STANDARD_HEAP_REQUIRED 14
+#define UART_USED UART_DEV(0)
 
 
 static isrpipe_t uartPipe;
 static uint8_t uartPipeBuffer[BUFFER_SIZE];
 
-static cond_t messageRecieved = COND_INIT;
+static cond_t messageReceived = COND_INIT;
 static uint8_t message[BUFFER_SIZE];
 
 isrpipe_t luaPipe;
-uint8_t luaScript[BUFFER_SIZE];
+uint8_t luaPipeBuffer[BUFFER_SIZE];
 cond_t luaScriptReady = COND_INIT;
 
-uint8_t assigned_id = 0;
-uint8_t available_memory = UINT8_MAX;
+uint8_t assignedId = 0;
+uint8_t remainingMemory_kB = 20;
 
 
 static inline MessageType getMessageType(uint8_t const firstMessageBlock)
@@ -44,7 +44,7 @@ static inline MessageType getMessageType(uint8_t const firstMessageBlock)
 
 static inline unsigned char createMessageHeader(MessageType const messageType)
 {
-    return ((messageType & 0b1111) << 4) | (assigned_id & 0b1111);
+    return ((messageType & 0b1111) << 4) | (assignedId & 0b1111);
 }
 
 static void uart_cb(void *arg, uint8_t data)
@@ -53,58 +53,75 @@ static void uart_cb(void *arg, uint8_t data)
 
     if (data == ETB_SIGN)
     {
-        cond_signal(&messageRecieved);
-    } else
+        cond_signal(&messageReceived);
+    }
+    else
     {
         isrpipe_write_one(&uartPipe, data);
     }
 }
 
-static void interpretMessage(unsigned const readBytes)
+static void send_message(void const *msg, int const msgLength)
+{
+    static uint8_t const etb = ETB_SIGN;
+    uart_write(UART_USED, msg, msgLength);
+    uart_write(UART_USED, &etb, 1);
+}
+
+static void interpretMessage(unsigned const numberOfBytes)
 {
     MessageType const messageType = getMessageType(message[0]);
     switch (messageType)
     {
         case eMessageTypeRegister:
-            assigned_id = message[1];
-            printf("Assigned_id = %d\n", assigned_id);
+        {
+            MessageRegister_Orchestrator const *msg = (MessageRegister_Orchestrator const *) &message[0];
+            assignedId = msg->assignedId;
+            printf("Assigned_id = %d\n", assignedId);
             break;
+        }
         case eMessageTypeSendScript:
-            available_memory -= LUA_SCRIPT_STANDARD_HEAP_REQUIRED;
-            isrpipe_write(&luaPipe, message + 1, readBytes - 1);
+        {
+            unsigned const scriptLength = numberOfBytes - sizeof(MessageHeader);
+            remainingMemory_kB -= scriptLength;
+            isrpipe_write(&luaPipe, message + sizeof(MessageHeader), scriptLength);
             cond_signal(&luaScriptReady);
             break;
+        }
         default:
+        {
             printf("Provided message type %d is not supported\n", messageType);
             break;
+        }
     }
 }
 
 void msgp_init(void)
 {
     isrpipe_init(&uartPipe, uartPipeBuffer, BUFFER_SIZE);
-    isrpipe_init(&luaPipe, luaScript, BUFFER_SIZE);
-    cond_init(&messageRecieved);
-    uart_init(UART_DEV(0), 115200, uart_cb, NULL);
-}
+    isrpipe_init(&luaPipe, luaPipeBuffer, BUFFER_SIZE);
 
-void msgp_checkUart(void)
-{
-    puts("Sleeping...");
-    cond_wait(&messageRecieved, &uartPipe.mutex);
-
-    puts("STOPPED SLEEPING!");
-    unsigned available = tsrb_avail(&uartPipe.tsrb);
-    isrpipe_read(&uartPipe, message, available);
-    interpretMessage(available);
+    cond_init(&messageReceived);
+    uart_init(UART_USED, 115200, uart_cb, NULL);
 }
 
 void msgp_register(void)
 {
-    unsigned char msg[3];
-    msg[0] = createMessageHeader(eMessageTypeRegister);
-    msg[1] = available_memory;
-    msg[2] = ETB_SIGN;
+    MessageRegister_Node msg;
+    msg.messageHeader.messageType = createMessageHeader(eMessageTypeRegister);
+    msg.messageHeader.senderId = INITIAL_ID;
+    msg.availableMemory_kB = remainingMemory_kB;
+    msg.supportedFeatures = 1 << 3; // DUMMY VALUE!!!
+    send_message(&msg.bytes, sizeof(msg));
+}
 
-    uart_write(UART_DEV(0), msg, sizeof(msg));
+void msgp_pollMessages(void)
+{
+    puts("Sleeping...");
+    cond_wait(&messageReceived, &uartPipe.mutex);
+
+    puts("STOPPED SLEEPING!");
+    unsigned const available = tsrb_avail(&uartPipe.tsrb);
+    isrpipe_read(&uartPipe, message, available);
+    interpretMessage(available);
 }

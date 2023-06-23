@@ -44,7 +44,7 @@ class MessageService(EventComponent):
         self.connector.send_binary_message(register_message.assigned_id, binary_message_response)
 
     def send_monitor_node_request(self, node_id: id) -> None:
-        monitor_node_request_message = MonitorNodeMessage(type=MessageType.MonitorNode,
+        monitor_node_request_message = MonitorNodeMessage(type=MessageType.Monitor,
                                                           sender=ORCHESTRATOR_ID)
         print(f"SENDING MONITOR NODE REQUEST {monitor_node_request_message}")
 

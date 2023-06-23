@@ -6,8 +6,9 @@ set(BOARD nucleo-l476rg)
 
 add_compile_definitions(DEBUG_MODE=0 NATIVE_TEST_MODE=0)
 
-include_directories(NodeFirmware/lua_engine/include)
 include_directories(NodeFirmware/include)
+include_directories(NodeFirmware/lua_engine)
+include_directories(NodeFirmware/lua_engine/include)
 
 ### RIOT ###
 include_directories($ENV{RIOT}/drivers/include/)

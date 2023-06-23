@@ -36,9 +36,10 @@
 
 extern cond_t luaScriptReady;
 extern isrpipe_t luaPipe;
-extern uint8_t luaScript[BUFFER_SIZE];
+extern uint8_t luaPipeBuffer[BUFFER_SIZE];
 
-static char luaMem[LUA_MEM_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+static lua_State *runningLuaState = NULL;
+static uint8_t luaInterpreterMemory[LUA_MEM_SIZE_BYTES] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 static struct callbackTable luaCallbacks[] = {
         {.functionCallback = l_initPin, .functionName="init_pin"},
@@ -58,34 +59,35 @@ static void initCallbackTable(lua_State *L)
 
 static int l_runScript(char const *const script, unsigned const scriptSize)
 {
-    lua_State *L = lua_riot_newstate(luaMem, sizeof(luaMem), NULL);
-    if (L == NULL)
+    runningLuaState = lua_riot_newstate(luaInterpreterMemory, sizeof(luaInterpreterMemory), NULL);
+    if (runningLuaState == NULL)
     {
         puts("[ERROR] Cannot create Lua state: not enough memory");
         return ENOMEM;
     }
 
-    initCallbackTable(L);
+    initCallbackTable(runningLuaState);
 
-    int const loadBaseLibResult = lua_riot_openlibs(L, LUAR_LOAD_BASE);
+    int const loadBaseLibResult = lua_riot_openlibs(runningLuaState, LUAR_LOAD_BASE);
     if (loadBaseLibResult != LUAR_LOAD_O_ALL)
     {
         printf("[ERROR] Trying to load library - %d\n", loadBaseLibResult);
         return EINTR;
     }
 
-    luaL_loadbuffer(L, script, scriptSize, "Main function");
+    luaL_loadbuffer(runningLuaState, script, scriptSize, "Main function");
 
-    int const pcallResult = lua_pcall(L, 0, 0, 0);
+    int const pcallResult = lua_pcall(runningLuaState, 0, 0, 0);
 
-    // When we run into memory problems this condition won't pass, and LUA_ERRMEM is returned
+    // When we run into memory problems this condition won't pass and LUA_ERRMEM is returned
     if (pcallResult != LUA_OK)
     {
         printf("[ERROR] Lua script running failed - %d\n", pcallResult);
         return EINTR;
     }
 
-    lua_close(L);
+    lua_close(runningLuaState);
+    runningLuaState = NULL;
     return 0;
 }
 
@@ -95,9 +97,20 @@ void luae_run(void)
 
     unsigned const size = tsrb_avail(&luaPipe.tsrb);
     printf("Script size - %d \n", size);
-    puts("Attempting to run main.lua");
-    l_runScript((const char *) luaScript, size);
+
+    puts("Attempting to run the lua script");
+    l_runScript((const char *) luaPipeBuffer, size);
     puts("Lua interpreter exited");
+
     const char *stack = thread_get_stackstart(thread_get_active());
-    printf("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACKSIZE - thread_measure_stack_free(stack));
+    printf("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACKSIZE_BYTES - thread_measure_stack_free(stack));
+}
+
+void luae_shutdown(void)
+{
+    if (runningLuaState != NULL)
+    {
+        puts("Shutting down the lua engine!");
+        lua_close(runningLuaState);
+    }
 }

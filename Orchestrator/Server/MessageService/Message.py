@@ -7,8 +7,7 @@ ORCHESTRATOR_ID = 15
 class MessageType(Enum):
     Register = 0
     SendScript = 1
-    MonitorNode = 2
-    MonitorNodeResponse = 3
+    Monitor = 2
 
 
 class Message:

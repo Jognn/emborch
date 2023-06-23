@@ -21,12 +21,12 @@
 
 
 /** Lua engine stack */
-static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE_BYTES] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 #if (NATIVE_TEST_MODE == 0)
 
 /** CODE */
-void *luaEngine(void *arg)
+void *task_luaEngine(void *arg)
 {
     (void) arg;
 
@@ -61,50 +61,42 @@ void* NativeTask(void *arg)
 /* Message processor stack */
 static char stack[1500] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
-void *msgProcessor(void *arg)
+void *task_msgProcessor(void *arg)
 {
     (void) arg;
 
+    msgp_init();
+    // Wait 5 seconds before sending the register message
+    xtimer_sleep(5);
+    msgp_register();
+
     while (true)
     {
-        msgp_checkUart();
+        msgp_pollMessages();
     }
 
     return NULL;
 }
 
-void registerNode(void *arg)
-{
-    (void) arg;
-
-    msgp_register();
-
-}
-
 int main(void)
 {
-    msgp_init();
 #if (NATIVE_TEST_MODE == 0)
-    thread_create(
-            luaEngineTaskStack,
-            sizeof(luaEngineTaskStack),
-            THREAD_PRIORITY_MAIN - 1,
-            THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
-            luaEngine,
-            NULL,
-            "LUA_TASK");
     thread_create(
             stack,
             sizeof(stack),
             THREAD_PRIORITY_MAIN - 2,
             THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
-            msgProcessor,
+            task_msgProcessor,
             NULL,
-            "UART_CHECK");
-
-    // Register 5 seconds after startup
-    xtimer_sleep(5);
-    msgp_register();
+            "MSG_PROCESSOR");
+    thread_create(
+            luaEngineTaskStack,
+            sizeof(luaEngineTaskStack),
+            THREAD_PRIORITY_MAIN - 1,
+            THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
+            task_luaEngine,
+            NULL,
+            "LUA_TASK");
 
 #else
     thread_create(
