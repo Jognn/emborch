@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Jognn
+ * Copyright (C) 2023 Jognn
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -34,6 +34,7 @@
 #include "cond.h"
 
 
+#define BUFFER_SIZE 512
 extern cond_t luaScriptReady;
 extern isrpipe_t luaPipe;
 extern uint8_t luaPipeBuffer[BUFFER_SIZE];

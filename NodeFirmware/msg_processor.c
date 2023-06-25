@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Jognn
+ * Copyright (C) 2023 Jognn
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -8,6 +8,7 @@
 
 
 #include "msg_processor.h"
+#include "messages.h"
 
 /** System */
 #include <stdio.h>
@@ -39,12 +40,12 @@ uint8_t remainingMemory_kB = 20;
 
 static inline MessageType getMessageType(uint8_t const firstMessageBlock)
 {
-    return ((firstMessageBlock & 0b11110000) >> 4) & 0b00001111;
+    return ((firstMessageBlock & MESSAGE_TYPE_MASK) >> 4);
 }
 
-static inline unsigned char createMessageHeader(MessageType const messageType)
+static inline MessageHeader createMessageHeader(MessageType const messageType)
 {
-    return ((messageType & 0b1111) << 4) | (assignedId & 0b1111);
+    return ((messageType & MESSAGE_TYPE_MASK) << 4) | (assignedId & MESSAGE_SENDER_MASK);
 }
 
 static void uart_cb(void *arg, uint8_t data)
@@ -61,11 +62,14 @@ static void uart_cb(void *arg, uint8_t data)
     }
 }
 
-static void send_message(void const *msg, int const msgLength)
+static void send_message(MessageType const messageType, void const *const msg, int const msgLength)
 {
     static uint8_t const etb = ETB_SIGN;
+    MessageHeader const messageHeader = createMessageHeader(messageType);
+
+    uart_write(UART_USED, &messageHeader, sizeof(messageHeader));
     uart_write(UART_USED, msg, msgLength);
-    uart_write(UART_USED, &etb, 1);
+    uart_write(UART_USED, &etb, sizeof(etb));
 }
 
 static void interpretMessage(unsigned const numberOfBytes)
@@ -108,11 +112,9 @@ void msgp_init(void)
 void msgp_register(void)
 {
     MessageRegister_Node msg;
-    msg.messageHeader.messageType = createMessageHeader(eMessageTypeRegister);
-    msg.messageHeader.senderId = INITIAL_ID;
     msg.availableMemory_kB = remainingMemory_kB;
     msg.supportedFeatures = 1 << 3; // DUMMY VALUE!!!
-    send_message(&msg.bytes, sizeof(msg));
+    send_message(eMessageTypeRegister, &msg.bytes, sizeof(msg));
 }
 
 void msgp_pollMessages(void)
