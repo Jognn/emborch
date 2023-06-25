@@ -18,6 +18,7 @@
 #include "periph/uart.h"
 #include "isrpipe.h"
 #include "cond.h"
+#include "lua_engine.h"
 
 
 #define ETB_SIGN 23
@@ -45,7 +46,7 @@ static inline MessageType getMessageType(uint8_t const firstMessageBlock)
 
 static inline MessageHeader createMessageHeader(MessageType const messageType)
 {
-    return ((messageType & MESSAGE_TYPE_MASK) << 4) | (assignedId & MESSAGE_SENDER_MASK);
+    return (messageType << 4) | (assignedId & MESSAGE_SENDER_MASK);
 }
 
 static void uart_cb(void *arg, uint8_t data)
@@ -79,7 +80,7 @@ static void interpretMessage(unsigned const numberOfBytes)
     {
         case eMessageTypeRegister:
         {
-            MessageRegister_Orchestrator const *msg = (MessageRegister_Orchestrator const *) &message[0];
+            MessageRegister_Orchestrator const *msg = (MessageRegister_Orchestrator const *) &message[1];
             assignedId = msg->assignedId;
             printf("Assigned_id = %d\n", assignedId);
             break;
@@ -88,8 +89,19 @@ static void interpretMessage(unsigned const numberOfBytes)
         {
             unsigned const scriptLength = numberOfBytes - sizeof(MessageHeader);
             remainingMemory_kB -= scriptLength;
+
+            luae_shutdown();
             isrpipe_write(&luaPipe, message + sizeof(MessageHeader), scriptLength);
             cond_signal(&luaScriptReady);
+            break;
+        }
+        case eMessageTypeMonitor:
+        {
+            puts("RESPONDING TO MONITOR REQUEST\n");
+            uint8_t const currentLuaStatus = luae_getStatus();
+            MessageMonitor_Node msg;
+            msg.currentLuaStatus = currentLuaStatus;
+            send_message(eMessageTypeMonitor, &msg.bytes, sizeof(msg));
             break;
         }
         default:
@@ -113,7 +125,7 @@ void msgp_register(void)
 {
     MessageRegister_Node msg;
     msg.availableMemory_kB = remainingMemory_kB;
-    msg.supportedFeatures = 1 << 3; // DUMMY VALUE!!!
+    msg.supportedFeatures = 257; // DUMMY VALUE!!!
     send_message(eMessageTypeRegister, &msg.bytes, sizeof(msg));
 }
 
@@ -126,4 +138,5 @@ void msgp_pollMessages(void)
     unsigned const available = tsrb_avail(&uartPipe.tsrb);
     isrpipe_read(&uartPipe, message, available);
     interpretMessage(available);
+    memset(&message[0], 0, available);
 }

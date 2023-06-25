@@ -55,7 +55,7 @@ class SerialConnector(Connector):
         logging.info(f"Text message from {port.name} -> {line[:-1].decode('ISO-8859-1')}")
 
     def handle_binary(self, port: SerialPort, line: bytearray) -> None:
-        logging.info(f"Binary message from {port.name} -> {line}")
+        logging.info(f"Binary message from {port.name} -> {line[:-1]}")
         is_waiting_for_id = bool(next(filter(lambda x: x.name == port.name, self.ports_waiting), None))
         if port.node_id is None and not is_waiting_for_id:
             self.ports_waiting.append(port)

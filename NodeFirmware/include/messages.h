@@ -43,14 +43,24 @@ typedef union __attribute__((packed))
         uint8_t availableMemory_kB;
         uint16_t supportedFeatures;
     };
-    uint8_t bytes[4];
+    uint8_t bytes[3];
 } MessageRegister_Node;
 
 
 /** Send script messages */
-
 /*
  * MessageSendScript_Orchestrator - skipped for now
  */
+
+
+/** Monitor messages */
+typedef union __attribute__((packed))
+{
+    struct
+    {
+        uint8_t currentLuaStatus;
+    };
+    uint8_t bytes[1];
+} MessageMonitor_Node;
 
 #endif //EMBORCH_MESSAGES_H

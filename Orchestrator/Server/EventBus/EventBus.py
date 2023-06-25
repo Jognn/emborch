@@ -41,6 +41,6 @@ class EventBus:
         elif event_type == EventType.MONITOR_NODE:
             self.message_service.send_monitor_node_request(node_id=event.node_id)
         elif event_type == EventType.MONITOR_NODE_RESULT:
-            self.node_registry.monitor_node_response(node_id=event.node_id)
+            self.node_registry.monitor_node_response(node_id=event.node_id, response=event.response)
         else:
             logging.error(f"[EventBus] Unknown event type: {event_type}")

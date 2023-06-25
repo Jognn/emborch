@@ -10,8 +10,8 @@ from Orchestrator.Server.MessageService.Message import Message, SendScriptMessag
     MonitorNodeMessage
 from Orchestrator.Server.NodeRegistry.Node import Node
 
-MESSAGE_TYPE_MASK = 240
-SENDER_ID_MASK = 15
+MESSAGE_TYPE_MASK = 0xF0
+MESSAGE_SENDER_ID_MASK = 0x0F
 ORCHESTRATOR_ID = 15
 
 
@@ -46,7 +46,8 @@ class MessageService(EventComponent):
     def send_monitor_node_request(self, node_id: id) -> None:
         monitor_node_request_message = MonitorNodeMessage(type=MessageType.Monitor,
                                                           sender=ORCHESTRATOR_ID)
-        print(f"SENDING MONITOR NODE REQUEST {monitor_node_request_message}")
+        binary_message_response = self._generate_binary_message(monitor_node_request_message)
+        self.connector.send_binary_message(node_id, binary_message_response)
 
     async def _poll_messages(self) -> None:
         while True:
@@ -54,54 +55,48 @@ class MessageService(EventComponent):
             self._handle_message(binary_message)
 
     def _generate_binary_message(self, message: Message) -> bytearray:
-        binary_message = bytearray()
-
         # Header
         message_type = (message.type.value & 0xF) << 4
         message_sender = message.sender & 0xF
         binary_header = message_type | message_sender
-        binary_message.append(binary_header)
+        binary_message = bytearray([binary_header])
 
         # Body
-        binary_body = bytearray()
         if message.type == MessageType.Register:
-            binary_body.append(message.assigned_id)
+            binary_message.extend([message.assigned_id])
         elif message.type == MessageType.SendScript:
-            for byte in message.payload:
-                binary_body.append(byte)
-        elif message.type == MessageType.AliveCheck:
-            logging.error("[MessageService] Generating AliveCheck message is not supported yet!")
-        elif message.type == MessageType.Report:
-            logging.error("[MessageService] Generating Report message is not supported yet!")
+            binary_message.extend(message.payload)
+        elif message.type == MessageType.Monitor:
+            pass
         else:
             logging.error("[MessageService] Generating unsupported message type!")
-        binary_message.extend(binary_body)
 
         return binary_message
 
     def _handle_message(self, received_bytes: bytearray) -> Optional[RegisterMessage]:
         header = received_bytes[0]
         message_type = MessageType((header & MESSAGE_TYPE_MASK) >> 4)
-        sender_id = (header & SENDER_ID_MASK)
+        sender_id = (header & MESSAGE_SENDER_ID_MASK)
 
         event = Event()
         if message_type == MessageType.Register:
             logging.info("[MessageService] New Register message has arrived!")
             event.event_type = EventType.NODE_REGISTER
             event.available_memory = int(received_bytes[1])
-            # TODO: Support 'Supported features' :)
-            # event.supported_features = int(received_bytes[2] + received_bytes[3])
-            event.supported_features = 0
+            # TODO: This does not really work :)
+            event.supported_features = int(received_bytes[2] | (received_bytes[3] << 8))
             self.event_bus.notify(event)
         elif message_type == MessageType.SendScript:
             logging.error("[MessageService] Interpreting SendScript message is not supported yet!")
-            return None
-        elif message_type == MessageType.MonitorNodeResponse:
-            logging.error("[MessageService] Interpreting MonitorNodeResponse message is not supported yet!")
-            return None
+            return
+        elif message_type == MessageType.Monitor:
+            event.event_type = EventType.MONITOR_NODE_RESULT
+            event.node_id = sender_id
+            event.response = int(received_bytes[1])
+            self.event_bus.notify(event)
         else:
             logging.error("[MessageService] Interpreting unsupported message type!")
-            return None
+            return
 
 
 if __name__ == "__main__":

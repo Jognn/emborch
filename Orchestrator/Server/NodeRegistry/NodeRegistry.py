@@ -10,7 +10,8 @@ from Orchestrator.Server.NodeRegistry.Node import Node
 
 
 class NodeRegistry(EventComponent):
-    STATUS_REQUEST_TIMEOUT_S = 10
+    REQUEST_MONITOR_NODE_INTERVAL_S = 30
+    STATUS_REQUEST_TIMEOUT_S = 30
 
     def __init__(self, async_task_manager: AsyncTaskManager):
         super().__init__()
@@ -52,12 +53,12 @@ class NodeRegistry(EventComponent):
         node.available_memory_bytes -= used_memory
         node.running_script = script_text
 
-    def monitor_node_response(self, node_id: int):
+    def monitor_node_response(self, node_id: int, response: int):
         node: Node = next(filter(lambda x: x.node_id == node_id, self.nodes), None)
         if node is None:
             return
 
-        node.status_queue.put(1)
+        node.status_queue.put_nowait(response)
 
     def get_nodes(self) -> List[Node]:
         return self.nodes
@@ -65,6 +66,9 @@ class NodeRegistry(EventComponent):
     async def _monitor_node(self, node: Node):
         while node.is_alive:
             try:
+                await asyncio.sleep(NodeRegistry.REQUEST_MONITOR_NODE_INTERVAL_S)
+
+                logging.info(f"[NodeRegistry] Requesting monitor reponse from {node.node_id}")
                 monitor_node_request = Event(EventType.MONITOR_NODE)
                 monitor_node_request.node_id = node.node_id
                 self.event_bus.notify(monitor_node_request)
@@ -73,7 +77,7 @@ class NodeRegistry(EventComponent):
                 logging.info(f"[NodeRegistry] Node {node.node_id} responded with MonitorNode status {status}")
             except TimeoutError:
                 logging.error(f"[NodeRegistry] Node {node.node_id} did not respond to the MonitorNode request.")
-                # self._unregister_node(node)
+                self._unregister_node(node)
 
     def _unregister_node(self, node):
         node.is_alive = False
