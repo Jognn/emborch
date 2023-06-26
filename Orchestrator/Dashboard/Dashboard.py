@@ -34,11 +34,15 @@ class Dashboard(AsyncTk):
 
         logging.info("emborch has started :)")
 
-    def add_new_node(self, node_id: int, name: str, available_memory: int, supported_features: int) -> None:
-        self.node_container.add_node_entry(node_id, name, available_memory, supported_features)
+    def add_new_node(self, node_id: int, name: str, state: str, available_memory: int, supported_features: int) -> None:
+        self.node_container.add_node_entry(node_id=node_id,
+                                           name=name,
+                                           state=state,
+                                           available_memory=available_memory,
+                                           supported_features=supported_features)
 
-    def node_assigned_script(self, node_id, available_memory: int, script_text: str):
+    def edit_node(self, node_id: int, state: str, available_memory: int, script_text: str):
         self.node_container.edit_node_entry(node_id=node_id,
-                                            status="Occupied",
+                                            state=state,
                                             available_memory=available_memory,
                                             script_txt=script_text)

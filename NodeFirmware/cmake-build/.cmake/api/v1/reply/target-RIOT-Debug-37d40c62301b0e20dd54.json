@@ -1,0 +1,266 @@
+{
+	"archive" : {},
+	"artifacts" : 
+	[
+		{
+			"path" : "RIOT/libRIOT.a"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"add_compile_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"/home/jogn/Projects/RIOT/CMakeLists.txt",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 10,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 7,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 9,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 10,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 11,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 14,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 15,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 16,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 17,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 18,
+				"parent" : 2
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -fdiagnostics-color=always"
+				},
+				{
+					"fragment" : "-std=gnu11"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 3,
+					"define" : "DEBUG_MODE=0"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "FEATURE_BITSET=1"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "NATIVE_TEST_MODE=0"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 4,
+					"path" : "/home/jogn/Projects/emborch/NodeFirmware/include"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "/home/jogn/Projects/emborch/NodeFirmware/lua_engine"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "/home/jogn/Projects/emborch/NodeFirmware/lua_engine/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/jogn/Projects/RIOT/drivers/include"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "/home/jogn/Projects/RIOT/core/include"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "/home/jogn/Projects/RIOT/sys/include"
+				},
+				{
+					"backtrace" : 10,
+					"path" : "/home/jogn/Projects/RIOT/pkg/lua/include"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/home/jogn/Projects/RIOT/boards/nucleo-l476rg/include"
+				}
+			],
+			"language" : "C",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "11"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			]
+		}
+	],
+	"id" : "RIOT::@643c989a38f722d3db71",
+	"name" : "RIOT",
+	"nameOnDisk" : "libRIOT.a",
+	"paths" : 
+	{
+		"build" : "RIOT",
+		"source" : "/home/jogn/Projects/RIOT"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				8
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/jogn/Projects/RIOT/core/cond.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/jogn/Projects/RIOT/core/mbox.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/jogn/Projects/RIOT/core/msg.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/jogn/Projects/RIOT/core/msg_bus.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/jogn/Projects/RIOT/core/mutex.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/jogn/Projects/RIOT/core/sched.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/jogn/Projects/RIOT/core/thread.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "/home/jogn/Projects/RIOT/core/thread_flags.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "/home/jogn/Projects/RIOT/tests/riot_logo.h",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

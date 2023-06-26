@@ -1,0 +1,8 @@
+/home/jogn/Projects/emborch/NodeFirmware/cmake-build/CMakeFiles/edit_cache.dir
+/home/jogn/Projects/emborch/NodeFirmware/cmake-build/CMakeFiles/rebuild_cache.dir
+/home/jogn/Projects/emborch/NodeFirmware/cmake-build/RIOT/CMakeFiles/RIOT.dir
+/home/jogn/Projects/emborch/NodeFirmware/cmake-build/RIOT/CMakeFiles/edit_cache.dir
+/home/jogn/Projects/emborch/NodeFirmware/cmake-build/RIOT/CMakeFiles/rebuild_cache.dir
+/home/jogn/Projects/emborch/NodeFirmware/cmake-build/NodeFirmware/CMakeFiles/emborch.dir
+/home/jogn/Projects/emborch/NodeFirmware/cmake-build/NodeFirmware/CMakeFiles/edit_cache.dir
+/home/jogn/Projects/emborch/NodeFirmware/cmake-build/NodeFirmware/CMakeFiles/rebuild_cache.dir

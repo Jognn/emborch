@@ -30,12 +30,17 @@ class ServerRelay(EventComponent):
         self.event_bus.notify(send_script_event)
 
     def new_node_registered(self, node: Node) -> None:
-        self.dashboard.add_new_node(node.node_id, node.name, node.available_memory_bytes, node.supported_features)
+        self.dashboard.add_new_node(node_id=node.node_id,
+                                    name=node.name,
+                                    state=node.state.value,
+                                    available_memory=node.available_memory_bytes,
+                                    supported_features=node.supported_features)
 
-    def node_assigned_script(self, node: Node):
-        self.dashboard.node_assigned_script(node_id=node.node_id,
-                                            available_memory=node.available_memory_bytes,
-                                            script_text=node.running_script)
+    def node_update(self, node: Node):
+        self.dashboard.edit_node(node_id=node.node_id,
+                                 state=node.state.value,
+                                 available_memory=node.available_memory_bytes,
+                                 script_text=node.running_script)
 
     def _compress_text(self, text: str) -> str:
         one_line_text = text.replace('\n', ' ').replace('\r', '')

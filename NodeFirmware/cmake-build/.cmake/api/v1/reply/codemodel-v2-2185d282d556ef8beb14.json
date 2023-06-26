@@ -1,0 +1,115 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.23"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "RIOT",
+					"jsonFile" : "directory-RIOT-Debug-dbc1dacc2943a387688a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.23"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "/home/jogn/Projects/RIOT",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "NodeFirmware",
+					"jsonFile" : "directory-NodeFirmware-Debug-1c81760ab0bac08e4676.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.23"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "NodeFirmware",
+					"targetIndexes" : 
+					[
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						2
+					],
+					"name" : "emborch",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "RIOT",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "RIOT::@643c989a38f722d3db71",
+					"jsonFile" : "target-RIOT-Debug-37d40c62301b0e20dd54.json",
+					"name" : "RIOT",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "emborch::@622a671a76fa0033f47e",
+					"jsonFile" : "target-emborch-Debug-97e8fc8de6f717b3a2c0.json",
+					"name" : "emborch",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/jogn/Projects/emborch/NodeFirmware/cmake-build",
+		"source" : "/home/jogn/Projects/emborch"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}

@@ -9,6 +9,7 @@ class EventType(Enum):
     SEND_SCRIPT = 2
     MONITOR_NODE = 3
     MONITOR_NODE_RESULT = 4
+    ALTER_NODE_STATE = 5
 
 
 @dataclasses.dataclass

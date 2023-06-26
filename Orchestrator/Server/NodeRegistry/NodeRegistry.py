@@ -6,11 +6,11 @@ from typing import Optional, List
 from Orchestrator.AsyncTaskManager import AsyncTaskManager
 from Orchestrator.Server.EventBus.Event import Event, EventType
 from Orchestrator.Server.EventBus.EventComponent import EventComponent
-from Orchestrator.Server.NodeRegistry.Node import Node
+from Orchestrator.Server.NodeRegistry.Node import Node, NodeState
 
 
 class NodeRegistry(EventComponent):
-    REQUEST_MONITOR_NODE_INTERVAL_S = 30
+    REQUEST_MONITOR_NODE_INTERVAL_S = 15
     STATUS_REQUEST_TIMEOUT_S = 30
 
     def __init__(self, async_task_manager: AsyncTaskManager):
@@ -38,7 +38,7 @@ class NodeRegistry(EventComponent):
         new_node_id = self.available_ids.pop()
         node = Node(node_id=new_node_id,
                     name=self._generate_random_name(),
-                    available_memory_bytes=available_memory_kb * 1000,
+                    initial_memory_bytes=available_memory_kb * 1000,
                     supported_features=supported_features)
         self.nodes.append(node)
         self.async_task_manager.add_task(self._monitor_node(node))
@@ -47,40 +47,57 @@ class NodeRegistry(EventComponent):
 
     def set_working_node(self, node_id: int, used_memory: int, script_text: str) -> None:
         node: Node = next(filter(lambda x: x.node_id == node_id, self.nodes), None)
-        if node is None:
-            return
-
-        node.available_memory_bytes -= used_memory
-        node.running_script = script_text
+        if node is not None:
+            node.available_memory_bytes -= used_memory
+            node.running_script = script_text
+            node.state = NodeState.Working
 
     def monitor_node_response(self, node_id: int, response: int):
         node: Node = next(filter(lambda x: x.node_id == node_id, self.nodes), None)
-        if node is None:
-            return
-
-        node.status_queue.put_nowait(response)
+        if node is not None:
+            node.status_queue.put_nowait(response)
 
     def get_nodes(self) -> List[Node]:
         return self.nodes
 
     async def _monitor_node(self, node: Node):
-        while node.is_alive:
+        first_iteration = True
+        while node.state is NodeState.Connected or first_iteration:
             try:
                 await asyncio.sleep(NodeRegistry.REQUEST_MONITOR_NODE_INTERVAL_S)
 
-                logging.info(f"[NodeRegistry] Requesting monitor reponse from {node.node_id}")
+                logging.info(f"[NodeRegistry] Sending MonitorNode request to node {node.node_id}")
                 monitor_node_request = Event(EventType.MONITOR_NODE)
                 monitor_node_request.node_id = node.node_id
                 self.event_bus.notify(monitor_node_request)
 
-                status = await asyncio.wait_for(node.status_queue.get(), NodeRegistry.STATUS_REQUEST_TIMEOUT_S)
-                logging.info(f"[NodeRegistry] Node {node.node_id} responded with MonitorNode status {status}")
+                status_code = await asyncio.wait_for(node.status_queue.get(), NodeRegistry.STATUS_REQUEST_TIMEOUT_S)
+                logging.info(f"[NodeRegistry] Node {node.node_id} responded with status code {status_code}")
+                self._update_node_after_status(node, status_code)
             except TimeoutError:
                 logging.error(f"[NodeRegistry] Node {node.node_id} did not respond to the MonitorNode request.")
                 self._unregister_node(node)
+            finally:
+                alter_node_state_event = Event(EventType.ALTER_NODE_STATE)
+                alter_node_state_event.node = node
+                self.event_bus.notify(alter_node_state_event)
+                first_iteration = False
 
-    def _unregister_node(self, node):
-        node.is_alive = False
+    def _update_node_after_status(self, node: Node, status_code: int) -> None:
+        if status_code == 255:
+            if node.running_script is not None:
+                node.available_memory_bytes = node.initial_memory_bytes
+            node.running_script = None
+            node.state = NodeState.Connected
+        elif status_code == 0:
+            node.state = NodeState.Working
+        else:
+            node.state = NodeState.Error
+            node.running_script = None
+            node.available_memory_bytes = node.initial_memory_bytes
+
+    def _unregister_node(self, node: Node) -> None:
+        node.state = NodeState.Disconnected
         self.nodes.remove(node)
 
     def _generate_random_name(self) -> str:

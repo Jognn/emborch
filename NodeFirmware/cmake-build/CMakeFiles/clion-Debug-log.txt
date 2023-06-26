@@ -1,0 +1,4 @@
+/snap/clion/241/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/snap/clion/241/bin/ninja/linux/x64/ninja -DCMAKE_C_COMPILER=gcc -G Ninja -S /home/jogn/Projects/emborch -B /home/jogn/Projects/emborch/NodeFirmware/cmake-build
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/jogn/Projects/emborch/NodeFirmware/cmake-build

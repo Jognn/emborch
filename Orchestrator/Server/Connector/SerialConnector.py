@@ -24,13 +24,12 @@ class SerialConnector(Connector):
     def send_binary_message(self, node_id: int, binary_message: bytearray) -> None:
         port = next(filter(lambda x: x.node_id == node_id, self.serial_ports), None)
         if port is not None:
-            logging.info(f"[Connector] Sending {binary_message}")
+            logging.debug(f"[Connector] Sending {binary_message}")
             port.write(binary_message)
         else:
             logging.error(f"[Connector] Could not find a port with node_id={node_id}. Node not registered yet?")
 
     def node_registered(self, node_id: int) -> None:
-        # TODO: FIX ALREADY REGISTERED PORT
         try:
             registered_port = self.ports_waiting.pop(0)
             registered_port.node_id = node_id
