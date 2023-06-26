@@ -84,7 +84,7 @@ class MessageService(EventComponent):
             event.event_type = EventType.NODE_REGISTER
             event.available_memory = int(received_bytes[1])
             # TODO: This does not really work :)
-            event.supported_features = int(received_bytes[2] | (received_bytes[3] << 8))
+            event.supported_features = int(received_bytes[2])
             self.event_bus.notify(event)
         elif message_type == MessageType.SendScript:
             logging.error("[MessageService] Interpreting SendScript message is not supported yet!")

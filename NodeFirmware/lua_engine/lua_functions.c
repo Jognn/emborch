@@ -11,9 +11,6 @@
 #include "definitons.h"
 
 
-#if (NATIVE_TEST_MODE == 0)
-
-
 #include "lua_functions.h"
 
 /** Modules */
@@ -61,5 +58,3 @@ int l_sleepMilli(lua_State *L)
 
     return 0;
 }
-
-#endif // NATIVE_TASK == 0

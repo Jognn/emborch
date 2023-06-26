@@ -41,9 +41,9 @@ typedef union __attribute__((packed))
     struct
     {
         uint8_t availableMemory_kB;
-        uint16_t supportedFeatures;
+        uint8_t supportedFeatures;
     };
-    uint8_t bytes[3];
+    uint8_t bytes[2];
 } MessageRegister_Node;
 
 

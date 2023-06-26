@@ -4,7 +4,7 @@ project(emborch C)
 set(CMAKE_C_STANDARD 11)
 set(BOARD nucleo-l476rg)
 
-add_compile_definitions(DEBUG_MODE=0 NATIVE_TEST_MODE=0)
+add_compile_definitions(DEBUG_MODE=0 NATIVE_TEST_MODE=0 FEATURE_BITSET=1)
 
 include_directories(NodeFirmware/include)
 include_directories(NodeFirmware/lua_engine)

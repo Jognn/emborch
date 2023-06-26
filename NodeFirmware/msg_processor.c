@@ -125,7 +125,7 @@ void msgp_register(void)
 {
     MessageRegister_Node msg;
     msg.availableMemory_kB = remainingMemory_kB;
-    msg.supportedFeatures = 257; // DUMMY VALUE!!!
+    msg.supportedFeatures = FEATURE_BITSET;
     send_message(eMessageTypeRegister, &msg.bytes, sizeof(msg));
 }
 
