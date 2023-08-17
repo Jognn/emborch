@@ -20,17 +20,22 @@ class SerialPort(Serial):
     async def read_bytes(self) -> (bool, bytearray):
         end_sign = (EOL_SIGN, EOT_SIGN)
         line = bytearray()
-        while True:
-            c = self.read()
-            if c:
-                line += c
-                if c in end_sign:
+        try:
+            while True:
+                c = self.read()
+                if c:
+                    line += c
+                    if c in end_sign:
+                        break
+                else:
                     break
-            else:
-                break
 
-        is_binary = (c == EOT_SIGN)
-        return is_binary, line
+            is_binary = (c == EOT_SIGN)
+        except:
+            is_binary = False
+            line = None
+        finally:
+            return is_binary, line
 
     def write(self, binary_message: bytearray) -> int:
         binary_message.extend(EOT_SIGN)

@@ -23,6 +23,7 @@ class SerialConnector(Connector):
 
     def send_binary_message(self, node_id: int, binary_message: bytearray) -> None:
         port = next(filter(lambda x: x.node_id == node_id, self.serial_ports), None)
+        
         if port is not None:
             logging.debug(f"[Connector] Sending {binary_message}")
             port.write(binary_message)
@@ -40,6 +41,10 @@ class SerialConnector(Connector):
         while True:
             serial_port = next(filter(lambda x: x.name == port.name, self.serial_ports))
             is_binary, line = await serial_port.read_bytes()
+
+            if line is None:
+                port.dead = True
+                return
 
             if len(line) == 0:
                 await asyncio.sleep(3)

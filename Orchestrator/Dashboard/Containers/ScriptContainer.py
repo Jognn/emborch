@@ -11,6 +11,10 @@ class ScriptContainer:
         frame = Frame(root)
         frame.pack(padx=10, pady=10)
 
+        self.script_title = Label(frame, text="Task to run:")
+        self.script_title.config(font=("Helvetica", "20", "bold"))
+        self.script_title.pack()
+
         # Script text
         self.text = Text(frame)
         self.text.insert('1.0', DEFAULT_SCRIPT_TEXT)
