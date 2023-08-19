@@ -25,6 +25,7 @@
 
 /** System */
 #include <errno.h>
+#include <string.h>
 
 /** Modules */
 #include "lua_functions.h"
@@ -64,7 +65,7 @@ static int l_runScript(char const *const script, unsigned const scriptSize)
     runningLuaState = lua_riot_newstate(luaInterpreterMemory, sizeof(luaInterpreterMemory), NULL);
     if (runningLuaState == NULL)
     {
-        puts("[ERROR] Cannot create Lua state: not enough memory");
+        LOG_DEBUG("[ERROR] Cannot create Lua state: not enough memory");
         return LUA_ERRMEM;
     }
 
@@ -73,7 +74,7 @@ static int l_runScript(char const *const script, unsigned const scriptSize)
     int const loadBaseLibResult = lua_riot_openlibs(runningLuaState, LUAR_LOAD_BASE);
     if (loadBaseLibResult != LUAR_LOAD_O_ALL)
     {
-        printf("[ERROR] Trying to load library - %d\n", loadBaseLibResult);
+        LOG_DEBUG("[ERROR] Trying to load library - %d\n", loadBaseLibResult);
         return LUA_ERRRUN;
     }
 
@@ -85,7 +86,7 @@ static int l_runScript(char const *const script, unsigned const scriptSize)
     // When we run into memory problems this condition won't pass and LUA_ERRMEM is returned
     if (callResult != LUA_OK)
     {
-        printf("[ERROR] Lua script running failed - %d\n", currentLuaStatus);
+        LOG_DEBUG("[ERROR] Lua script running failed - %d\n", currentLuaStatus);
         runningLuaState = NULL;
         return callResult;
     }
@@ -100,21 +101,22 @@ void luae_run(void)
     cond_wait(&luaScriptReady, &luaPipe.mutex);
 
     unsigned const size = tsrb_avail(&luaPipe.tsrb);
-    puts("Attempting to run the lua script");
+    LOG_DEBUG("Attempting to run the lua script");
     currentLuaStatus = UINT8_MAX;
     currentLuaStatus = l_runScript((const char *) luaPipeBuffer, size);
-    puts("Lua interpreter exited");
+    LOG_DEBUG("Lua interpreter exited");
 
     char const *stack = thread_get_stackstart(thread_get_active());
-    printf("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACK_SIZE_B - thread_measure_stack_free(stack));
+    LOG_DEBUG("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACK_SIZE_B - thread_measure_stack_free(stack));
 }
 
 void luae_shutdown(void)
 {
     if (runningLuaState != NULL)
     {
-        puts("Shutting down the lua engine!");
+        LOG_DEBUG("Shutting down the lua engine!");
         lua_close(runningLuaState);
+        memset(luaInterpreterMemory, 0, LUA_INTERPRETER_SIZE_B);
     }
 }
 

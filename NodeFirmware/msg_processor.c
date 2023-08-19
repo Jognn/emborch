@@ -83,7 +83,7 @@ static void interpretMessage(unsigned const numberOfBytes)
         {
             MessageRegister_Orchestrator const *msg = (MessageRegister_Orchestrator const *) &message[1];
             assignedId = msg->assignedId;
-            printf("Assigned_id = %d\n", assignedId);
+            LOG_DEBUG("Assigned_id = %d\n", assignedId);
             break;
         }
         case eMessageTypeSendScript:
@@ -98,7 +98,7 @@ static void interpretMessage(unsigned const numberOfBytes)
         }
         case eMessageTypeMonitor:
         {
-            puts("RESPONDING TO MONITOR REQUEST\n");
+            LOG_DEBUG("RESPONDING TO MONITOR REQUEST\n");
             uint8_t const currentLuaStatus = luae_getStatus();
             MessageMonitor_Node msg;
             msg.currentLuaStatus = currentLuaStatus;
@@ -107,7 +107,7 @@ static void interpretMessage(unsigned const numberOfBytes)
         }
         default:
         {
-            printf("Provided message type %d is not supported\n", messageType);
+            LOG_DEBUG("Provided message type %d is not supported\n", messageType);
             break;
         }
     }
@@ -132,12 +132,13 @@ void msgp_register(void)
 
 void msgp_pollMessages(void)
 {
-    puts("Sleeping...");
+    LOG_DEBUG("Sleeping...");
     cond_wait(&messageReceived, &uartPipe.mutex);
 
-    puts("STOPPED SLEEPING!");
+    LOG_DEBUG("STOPPED SLEEPING!");
     unsigned const available = tsrb_avail(&uartPipe.tsrb);
     isrpipe_read(&uartPipe, message, available);
+    tsrb_clear(&uartPipe.tsrb);
     interpretMessage(available);
     memset(&message[0], 0, available);
 }

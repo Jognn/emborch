@@ -68,7 +68,7 @@ void *task_msgProcessor(void *arg)
     msgp_init();
     // Wait 5 seconds before sending the register message
     xtimer_sleep(5);
-    puts("SENDING REGISTER MESSAGE");
+    LOG_DEBUG("SENDING REGISTER MESSAGE");
     msgp_register();
 
     while (true)
