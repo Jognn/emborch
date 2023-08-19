@@ -41,7 +41,7 @@ extern uint8_t luaPipeBuffer[BUFFER_SIZE];
 
 static lua_State *runningLuaState = NULL;
 static uint8_t currentLuaStatus = -1;
-static uint8_t luaInterpreterMemory[LUA_MEM_SIZE_BYTES] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+static uint8_t luaInterpreterMemory[LUA_INTERPRETER_SIZE_B] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 static struct callbackTable luaCallbacks[] = {
         {.functionCallback = l_initPin, .functionName="init_pin"},
@@ -106,7 +106,7 @@ void luae_run(void)
     puts("Lua interpreter exited");
 
     char const *stack = thread_get_stackstart(thread_get_active());
-    printf("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACKSIZE_BYTES - thread_measure_stack_free(stack));
+    printf("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACK_SIZE_B - thread_measure_stack_free(stack));
 }
 
 void luae_shutdown(void)

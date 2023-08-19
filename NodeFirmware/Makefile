@@ -1,7 +1,7 @@
 # Set the name of your application:
 APPLICATION = emborch
 
-# If no BOARD is found in the environment, use this default:
+# If no BOARD is found in the environment, use this default one:
 BOARD ?= nucleo-l476rg
 
 # This has to be the absolute path to the RIOT base directory:
@@ -23,9 +23,25 @@ QUIET ?= 1
 
 # Adding includes
 INCLUDES += -I$(CURDIR)/include
+
+# Adding defines
 INCLUDES += -DDEBUG_MODE=0
 INCLUDES += -DNATIVE_TEST_MODE=0
-INCLUDES += -DFEATURE_BITSET=1
+
+# Adding board defines
+ifeq ($(BOARD), nucleo-l476rg)
+ INCLUDES += -DLUA_BOARD_SPECIFIC_INTERPRETER_SIZE=20000
+ INCLUDES += -DLUA_BOARD_SPECIFIC_STACK_SIZE=2000
+ INCLUDES += -DFEATURE_BITSET=1
+else ifeq ($(BOARD), nucleo-f722ze)
+ INCLUDES += -DLUA_BOARD_SPECIFIC_INTERPRETER_SIZE=30000
+ INCLUDES += -DLUA_BOARD_SPECIFIC_STACK_SIZE=2000
+ INCLUDES += -DFEATURE_BITSET=1
+else
+ INCLUDES += -DLUA_BOARD_SPECIFIC_INTERPRETER_SIZE=-1
+ INCLUDES += -DLUA_BOARD_SPECIFIC_STACK_SIZE=-1
+ INCLUDES += -DFEATURE_BITSET=-1
+endif
 
 # Adding the lua package
 USEPKG += lua

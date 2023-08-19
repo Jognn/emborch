@@ -19,6 +19,7 @@
 #include "isrpipe.h"
 #include "cond.h"
 #include "lua_engine.h"
+#include "definitons.h"
 
 
 #define ETB_SIGN 23
@@ -36,7 +37,7 @@ uint8_t luaPipeBuffer[BUFFER_SIZE];
 cond_t luaScriptReady = COND_INIT;
 
 uint8_t assignedId = 0;
-uint8_t remainingMemory_kB = 20;
+uint8_t remainingMemory_kB = LUA_INTERPRETER_SIZE_B / 1000;
 
 
 static inline MessageType getMessageType(uint8_t const firstMessageBlock)

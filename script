@@ -7,3 +7,5 @@ while get_temperature() < 30 do
 	toggle_pin(LED)
 	sleep(SLEEP_TIME_MS)
 end
+
+export PYTHONPATH="/home/jogn/Projects/emborch:$PYTHONPATH"

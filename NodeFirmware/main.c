@@ -21,7 +21,7 @@
 
 
 /** Lua engine stack */
-static char luaEngineTaskStack[LUA_ENGINE_TASK_STACKSIZE_BYTES] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+static char luaEngineTaskStack[LUA_ENGINE_TASK_STACK_SIZE_B] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 #if (NATIVE_TEST_MODE == 0)
 
