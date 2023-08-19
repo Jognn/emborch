@@ -1,7 +1,7 @@
 import asyncio
 from typing import Optional
 
-from serial import Serial
+from serial import Serial, SerialException
 
 EOT_SIGN = b'\x17'
 EOL_SIGN = b'\x0A'
@@ -38,5 +38,8 @@ class SerialPort(Serial):
             return is_binary, line
 
     def write(self, binary_message: bytearray) -> int:
-        binary_message.extend(EOT_SIGN)
-        return super().write(binary_message)
+        try:
+            binary_message.extend(EOT_SIGN)
+            return super().write(binary_message)
+        except SerialException:
+            return -1
