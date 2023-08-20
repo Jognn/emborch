@@ -32,6 +32,7 @@
 #include "msg_processor.h"
 #include "lua_run.h"
 #include "isrpipe.h"
+#include "thread.h"
 #include "cond.h"
 
 
@@ -40,15 +41,24 @@ extern cond_t luaScriptReady;
 extern isrpipe_t luaPipe;
 extern uint8_t luaPipeBuffer[BUFFER_SIZE];
 
-static lua_State *runningLuaState = NULL;
-static uint8_t currentLuaStatus = -1;
+/** Lua engine task's stack */
+static char luaEngineTaskStack[LUA_ENGINE_TASK_STACK_SIZE_B] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+
+/** Lua interpreter memory */
 static uint8_t luaInterpreterMemory[LUA_INTERPRETER_SIZE_B] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
+
+/** Lua context */
+static uint8_t luaEnginePid = 0;
+static uint8_t currentLuaStatus = -1;
+static lua_State *runningLuaState = NULL;
+
 
 static struct callbackTable luaCallbacks[] = {
         {.functionCallback = l_initPin, .functionName="init_pin"},
         {.functionCallback = l_togglePin, .functionName = "toggle_pin"},
         {.functionCallback = l_sleep, .functionName = "sleep"},
         {.functionCallback = l_sleepMilli, .functionName = "sleep_ms"},
+        {.functionCallback = l_getSpeed, .functionName = "get_speed"},
 };
 
 static void initCallbackTable(lua_State *L)
@@ -60,7 +70,7 @@ static void initCallbackTable(lua_State *L)
     }
 }
 
-static int l_runScript(char const *const script, unsigned const scriptSize)
+static int runLuaScript(char const *const script, unsigned const scriptSize)
 {
     runningLuaState = lua_riot_newstate(luaInterpreterMemory, sizeof(luaInterpreterMemory), NULL);
     if (runningLuaState == NULL)
@@ -96,18 +106,37 @@ static int l_runScript(char const *const script, unsigned const scriptSize)
     return UINT8_MAX;
 }
 
-void luae_run(void)
+static void *luaEngineLoop(void *arg)
 {
-    cond_wait(&luaScriptReady, &luaPipe.mutex);
+    (void) arg;
 
-    unsigned const size = tsrb_avail(&luaPipe.tsrb);
-    LOG_DEBUG("Attempting to run the lua script");
-    currentLuaStatus = UINT8_MAX;
-    currentLuaStatus = l_runScript((const char *) luaPipeBuffer, size);
-    LOG_DEBUG("Lua interpreter exited");
+    while (true)
+    {
+        cond_wait(&luaScriptReady, &luaPipe.mutex);
 
-    char const *stack = thread_get_stackstart(thread_get_active());
-    LOG_DEBUG("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACK_SIZE_B - thread_measure_stack_free(stack));
+        unsigned const size = tsrb_avail(&luaPipe.tsrb);
+        LOG_DEBUG("Attempting to run the lua script");
+        currentLuaStatus = UINT8_MAX;
+        currentLuaStatus = runLuaScript((const char *) luaPipeBuffer, size);
+        LOG_DEBUG("Lua interpreter exited");
+
+        char const *stack = thread_get_stackstart(thread_get_active());
+        LOG_DEBUG("LUA_ENGINE STACK USAGE = %d\n", LUA_ENGINE_TASK_STACK_SIZE_B - thread_measure_stack_free(stack));
+    }
+
+    return NULL;
+}
+
+void luae_init(void)
+{
+    luaEnginePid = thread_create(
+            luaEngineTaskStack,
+            sizeof(luaEngineTaskStack),
+            THREAD_PRIORITY_MAIN - 1,
+            THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
+            luaEngineLoop,
+            NULL,
+            "LUA_TASK");
 }
 
 void luae_shutdown(void)
@@ -116,7 +145,6 @@ void luae_shutdown(void)
     {
         LOG_DEBUG("Shutting down the lua engine!");
         lua_close(runningLuaState);
-        memset(luaInterpreterMemory, 0, LUA_INTERPRETER_SIZE_B);
     }
 }
 

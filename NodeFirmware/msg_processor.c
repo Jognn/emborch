@@ -13,11 +13,13 @@
 /** System */
 #include <stdio.h>
 #include <string.h>
+#include <xtimer.h>
+#include <thread.h>
+#include <isrpipe.h>
+#include "cond.h"
 
 /** Modules */
 #include "periph/uart.h"
-#include "isrpipe.h"
-#include "cond.h"
 #include "lua_engine.h"
 #include "definitons.h"
 
@@ -25,6 +27,9 @@
 #define ETB_SIGN 23
 #define UART_USED UART_DEV(0)
 
+
+/** Message processor thread's stack */
+static char threadStack[1500] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 static isrpipe_t uartPipe;
 static uint8_t uartPipeBuffer[BUFFER_SIZE];
@@ -74,6 +79,15 @@ static void send_message(MessageType const messageType, void const *const msg, i
     uart_write(UART_USED, &etb, sizeof(etb));
 }
 
+static void registerNode(void)
+{
+    LOG_DEBUG("SENDING REGISTER MESSAGE");
+    MessageRegister_Node msg;
+    msg.availableMemory_kB = remainingMemory_kB;
+    msg.supportedFeatures = FEATURE_BITSET;
+    send_message(eMessageTypeRegister, &msg.bytes, sizeof(msg));
+}
+
 static void interpretMessage(unsigned const numberOfBytes)
 {
     MessageType const messageType = getMessageType(message[0]);
@@ -113,6 +127,30 @@ static void interpretMessage(unsigned const numberOfBytes)
     }
 }
 
+static void *msgProcessorLoop(void *arg)
+{
+    (void) arg;
+
+    // Wait 5 seconds before sending the register message
+    xtimer_sleep(5);
+    registerNode();
+
+    while (true)
+    {
+        LOG_DEBUG("Sleeping...");
+        cond_wait(&messageReceived, &uartPipe.mutex);
+
+        LOG_DEBUG("STOPPED SLEEPING!");
+        unsigned const available = tsrb_avail(&uartPipe.tsrb);
+        isrpipe_read(&uartPipe, message, available);
+        tsrb_clear(&uartPipe.tsrb);
+        interpretMessage(available);
+        memset(&message[0], 0, available);
+    }
+
+    return NULL;
+}
+
 void msgp_init(void)
 {
     isrpipe_init(&uartPipe, uartPipeBuffer, BUFFER_SIZE);
@@ -120,25 +158,13 @@ void msgp_init(void)
 
     cond_init(&messageReceived);
     uart_init(UART_USED, 115200, uart_cb, NULL);
-}
 
-void msgp_register(void)
-{
-    MessageRegister_Node msg;
-    msg.availableMemory_kB = remainingMemory_kB;
-    msg.supportedFeatures = FEATURE_BITSET;
-    send_message(eMessageTypeRegister, &msg.bytes, sizeof(msg));
-}
-
-void msgp_pollMessages(void)
-{
-    LOG_DEBUG("Sleeping...");
-    cond_wait(&messageReceived, &uartPipe.mutex);
-
-    LOG_DEBUG("STOPPED SLEEPING!");
-    unsigned const available = tsrb_avail(&uartPipe.tsrb);
-    isrpipe_read(&uartPipe, message, available);
-    tsrb_clear(&uartPipe.tsrb);
-    interpretMessage(available);
-    memset(&message[0], 0, available);
+    thread_create(
+            threadStack,
+            sizeof(threadStack),
+            THREAD_PRIORITY_MAIN - 2,
+            THREAD_CREATE_WOUT_YIELD | THREAD_CREATE_STACKTEST,
+            msgProcessorLoop,
+            NULL,
+            "MSG_PROCESSOR");
 }

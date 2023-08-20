@@ -16,6 +16,7 @@
 /** Modules */
 #include "periph/gpio.h"
 #include "xtimer.h"
+#include "random.h"
 
 
 int l_initPin(lua_State *L)
@@ -57,4 +58,14 @@ int l_sleepMilli(lua_State *L)
     xtimer_msleep(milliseconds);
 
     return 0;
+}
+
+int l_getSpeed(lua_State *L)
+{
+    uint32_t const currentSpeed_kmh = random_uint32_range(40, 60);
+    LOG_DEBUG("Current speed - %ld\n", currentSpeed_kmh);
+
+    lua_pushnumber(L, currentSpeed_kmh);
+
+    return 1;
 }

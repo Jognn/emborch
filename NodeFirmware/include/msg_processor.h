@@ -11,8 +11,4 @@
 
 void msgp_init(void);
 
-void msgp_pollMessages(void);
-
-void msgp_register(void);
-
 #endif // EMBORCH_MSG_PROCESSOR_H

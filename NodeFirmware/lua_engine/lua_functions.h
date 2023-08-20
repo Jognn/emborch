@@ -28,4 +28,6 @@ int l_sleep(lua_State *L);
 
 int l_sleepMilli(lua_State *L);
 
+int l_getSpeed(lua_State *L);
+
 #endif // EMBORCH_LUA_FUNCTIONS_H

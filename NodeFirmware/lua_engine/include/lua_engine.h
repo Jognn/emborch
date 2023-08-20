@@ -9,8 +9,8 @@
 #include <stdint.h>
 
 
-/** Run the Lua Engine */
-void luae_run(void);
+/** Initialize the Lua Engine */
+void luae_init(void);
 
 /** Immediately shutdowns the Lua interpreter */
 void luae_shutdown(void);
