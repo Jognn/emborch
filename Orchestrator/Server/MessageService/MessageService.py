@@ -80,7 +80,7 @@ class MessageService(EventComponent):
 
         event = Event()
         if message_type == MessageType.Register:
-            logging.info("[MessageService] New Register message has arrived!")
+            logging.info("[MessageService] New 'Register' message has arrived")
             event.event_type = EventType.NODE_REGISTER
             event.available_memory = int(received_bytes[1])
             # TODO: This does not really work :)

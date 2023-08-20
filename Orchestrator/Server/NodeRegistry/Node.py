@@ -18,9 +18,9 @@ class Node:
     name: str
     initial_memory_bytes: int
     supported_features: int
+    status_queue: asyncio.Queue
     state: NodeState = NodeState.NotInitialized
     running_script: Optional[str] = None
-    status_queue: asyncio.Queue = asyncio.Queue(maxsize=1)
 
     def __post_init__(self):
         self.available_memory_bytes = self.initial_memory_bytes

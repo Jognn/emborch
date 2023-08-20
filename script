@@ -9,3 +9,10 @@ while get_temperature() < 30 do
 end
 
 export PYTHONPATH="/home/jogn/Projects/emborch:$PYTHONPATH"
+
+while (true)
+do
+	current_speed_kmh = get_speed()
+	print("Current speed is " .. current_speed_kmh .. " km/h")
+	sleep(5)
+end

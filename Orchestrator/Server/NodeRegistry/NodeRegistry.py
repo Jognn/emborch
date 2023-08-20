@@ -10,8 +10,8 @@ from Orchestrator.Server.NodeRegistry.Node import Node, NodeState
 
 
 class NodeRegistry(EventComponent):
-    REQUEST_MONITOR_NODE_INTERVAL_S = 15
-    STATUS_REQUEST_TIMEOUT_S = 30
+    REQUEST_MONITOR_NODE_INTERVAL_S = 10
+    STATUS_REQUEST_TIMEOUT_S = REQUEST_MONITOR_NODE_INTERVAL_S * 2
 
     def __init__(self, async_task_manager: AsyncTaskManager):
         super().__init__()
@@ -39,7 +39,8 @@ class NodeRegistry(EventComponent):
         node = Node(node_id=new_node_id,
                     name=self._generate_random_name(),
                     initial_memory_bytes=available_memory_kb * 1000,
-                    supported_features=supported_features)
+                    supported_features=supported_features,
+                    status_queue=asyncio.Queue(maxsize=1))
         self.nodes.append(node)
         self.async_task_manager.add_task(self._monitor_node(node))
         logging.info(f"[NodeRegistry] New node has been registered: {node}")
@@ -56,13 +57,15 @@ class NodeRegistry(EventComponent):
         node: Node = next(filter(lambda x: x.node_id == node_id, self.nodes), None)
         if node is not None:
             node.status_queue.put_nowait(response)
+        else:
+            logging.error(f"Did not expect a monitor response for Node {node_id}")
 
     def get_nodes(self) -> List[Node]:
         return self.nodes
 
     async def _monitor_node(self, node: Node):
         first_iteration = True
-        while node.state is NodeState.Connected or first_iteration:
+        while node.state in (NodeState.Connected, NodeState.Working) or first_iteration:
             try:
                 await asyncio.sleep(NodeRegistry.REQUEST_MONITOR_NODE_INTERVAL_S)
 
@@ -75,8 +78,17 @@ class NodeRegistry(EventComponent):
                 logging.info(f"[NodeRegistry] Node {node.node_id} responded with status code {status_code}")
                 self._update_node_after_status(node, status_code)
             except TimeoutError:
-                logging.error(f"[NodeRegistry] Node {node.node_id} did not respond to the MonitorNode request.")
+                logging.error(f"[NodeRegistry] Node {node.node_id} did not respond to the 'Monitor' request!")
                 self._unregister_node(node)
+                if node.running_script is not None:
+                    send_script_event = Event()
+                    send_script_event.event_type = EventType.SEND_SCRIPT
+                    send_script_event.script_text = node.running_script
+                    send_script_event.required_memory = node.initial_memory_bytes - node.available_memory_bytes
+                    script_binary = bytearray()
+                    script_binary.extend(map(ord, node.running_script))
+                    send_script_event.script_binary = script_binary
+                    self.event_bus.notify(send_script_event)
             finally:
                 alter_node_state_event = Event(EventType.ALTER_NODE_STATE)
                 alter_node_state_event.node = node

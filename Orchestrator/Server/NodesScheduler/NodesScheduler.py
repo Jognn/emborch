@@ -16,8 +16,8 @@ class NodesScheduler(EventComponent):
         )
         if node is None:
             logging.info(
-                f"[NodesScheduler] Could not find a suitable node for a {script_required_memory}B script."
-                f"\n Node list: {nodes}")
+                f"[NodesScheduler] Could not find a suitable node for a {script_required_memory} B script"
+                f"\n\t Current node list: {nodes}")
         else:
             logging.info(f"[NodesScheduler] Node {node.node_id} has been assigned a new script!")
             return node

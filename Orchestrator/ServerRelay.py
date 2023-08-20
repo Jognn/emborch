@@ -17,7 +17,7 @@ class ServerRelay(EventComponent):
         logging.info(f'[ServerRelay] Loaded script (length = {len(script_text)}): \n{script_text}')
 
         compressed_text = self._compress_text(script_text)
-        logging.info(f'[ServerRelay] Compressed script (length = {len(compressed_text)}): \n{compressed_text}')
+        logging.debug(f'[ServerRelay] Compressed script (length = {len(compressed_text)}): \n{compressed_text}')
 
         binary_script = bytearray()
         binary_script.extend(map(ord, compressed_text))

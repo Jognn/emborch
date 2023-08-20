@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from asyncio import Queue
-from typing import List
+from typing import List, Optional
 
 from serial.tools.list_ports_linux import comports
 
@@ -22,20 +22,21 @@ class SerialConnector(Connector):
             self.async_task_manager.add_task(self._read_binary_message(port))
 
     def send_binary_message(self, node_id: int, binary_message: bytearray) -> None:
-        port = next(filter(lambda x: x.node_id == node_id, self.serial_ports), None)
+        port: Optional[SerialPort] = next(filter(lambda x: x.node_id == node_id, self.serial_ports), None)
 
         if port is not None:
             logging.debug(f"[Connector] Sending {binary_message}")
-            port.write(binary_message)
-        else:
-            logging.error(f"[Connector] Could not find a port with node_id={node_id}. Node not registered yet?")
+            write_result = port.write(binary_message)
+            if write_result is None:
+                logging.error(f"[Connector] Could not send a message to node {node_id}!")
+                port.is_enabled = False
 
     def node_registered(self, node_id: int) -> None:
         try:
             registered_port = self.ports_waiting.pop(0)
             registered_port.node_id = node_id
         except IndexError:
-            logging.error("[Connector] Port is already registered")
+            logging.error("[Connector] Port is already registered!")
 
     async def _read_binary_message(self, port: SerialPort) -> None:
         while True:
@@ -43,7 +44,8 @@ class SerialConnector(Connector):
             is_binary, line = await serial_port.read_bytes()
 
             if line is None:
-                port.dead = True
+                port.is_enabled = False
+                port.node_id = None
                 return
 
             if len(line) == 0:
@@ -56,7 +58,12 @@ class SerialConnector(Connector):
                 self.handle_text(port, line)
 
     def handle_text(self, port: SerialPort, line: bytearray) -> None:
-        logging.debug(f"Text message from {port.name} -> {line[:-1].decode('ISO-8859-1')}")
+        line_text: str = line[:-1].decode('ISO-8859-1')
+
+        if "main():" in line_text or "(Version:" in line_text:
+            return
+
+        logging.info(f"Text message from {port.name} -> {line_text}")
 
     def handle_binary(self, port: SerialPort, line: bytearray) -> None:
         logging.debug(f"Binary message from {port.name} -> {line[:-1]}")

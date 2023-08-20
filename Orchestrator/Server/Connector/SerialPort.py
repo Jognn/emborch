@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Optional
 
 from serial import Serial, SerialException
@@ -15,11 +16,13 @@ class SerialPort(Serial):
         self.name: str = name
         self.send_queue = asyncio.Queue()
         self.node_id: Optional[int] = None
+        self.is_enabled = True
         self.flush()
 
     async def read_bytes(self) -> (bool, bytearray):
         end_sign = (EOL_SIGN, EOT_SIGN)
         line = bytearray()
+        is_binary = False
         try:
             while True:
                 c = self.read()
@@ -29,7 +32,6 @@ class SerialPort(Serial):
                         break
                 else:
                     break
-
             is_binary = (c == EOT_SIGN)
         except:
             is_binary = False
@@ -37,9 +39,10 @@ class SerialPort(Serial):
         finally:
             return is_binary, line
 
-    def write(self, binary_message: bytearray) -> int:
+    def write(self, binary_message: bytearray) -> Optional[int]:
         try:
             binary_message.extend(EOT_SIGN)
             return super().write(binary_message)
-        except SerialException:
-            return -1
+        except SerialException as exception:
+            logging.error(exception)
+            return None
